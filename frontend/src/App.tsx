@@ -1,10 +1,10 @@
 import './App.css' 
-import { Button } from "@/components/ui/button"
+import { LoginPage } from "@/components/login-page.tsx"
 
 function App() {
   return (
     <>
-      <Button>Click me</Button>
+      < LoginPage/>
     </>
   )
 }
