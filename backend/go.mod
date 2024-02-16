@@ -4,16 +4,21 @@ go 1.21.6
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.0
+	github.com/tursodatabase/libsql-client-go v0.0.0-20240208053015-5d6aa1e2196d
 	golang.org/x/oauth2 v0.16.0
 )
 
 require (
 	cloud.google.com/go/compute v1.20.1 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
+	github.com/antlr/antlr4/runtime/Go/antlr/v4 v4.0.0-20230512164433-5d1fd1a340c9 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
+	github.com/libsql/sqlite-antlr4-parser v0.0.0-20230802215326-5cb5bb604475 // indirect
+	golang.org/x/exp v0.0.0-20220722155223-a9213eeb770e // indirect
 	golang.org/x/net v0.20.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
+	nhooyr.io/websocket v1.8.7 // indirect
 )
 
 require (
