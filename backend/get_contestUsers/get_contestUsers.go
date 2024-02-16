@@ -34,7 +34,7 @@ func GetContestUsers(c *fiber.Ctx) error {
 	}
 	defer db.Close()
 
-	user_data, err := printUsers(db)
+	user_data, err := fetchUsers(db)
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ type User struct {
 	UserId    int
 }
 
-func printUsers(db *sql.DB) ([]User, error) {
+func fetchUsers(db *sql.DB) ([]User, error) {
 	rows, err := db.Query("SELECT * FROM contest_user")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to execute query: %v\n", err)
@@ -67,7 +67,7 @@ func printUsers(db *sql.DB) ([]User, error) {
 		}
 
 		users = append(users, user)
-		fmt.Println(user.ContestId, user.UserId)
+		// fmt.Println(user.ContestId, user.UserId)
 	}
 
 	if err := rows.Err(); err != nil {
