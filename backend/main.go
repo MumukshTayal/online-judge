@@ -31,6 +31,7 @@ func main() {
 	})
 	app.Post("/create_contest", add_contest.AddContest)
 	app.Post("/create_problem", add_problem.AddProblem)
+	app.Post("/add_problems_to_contest", add_contest.AddProblemIDandContestIDtoTable)
 	app.Listen(":8080")
 
 }
