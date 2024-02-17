@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/MumukshTayal/online-judge/add_contest"
+	"github.com/MumukshTayal/online-judge/add_problem"
 	"github.com/MumukshTayal/online-judge/config"
 	"github.com/MumukshTayal/online-judge/controllers"
 	"github.com/MumukshTayal/online-judge/get_contestUsers"
@@ -28,7 +29,8 @@ func main() {
 
 		return get_problem.GetProblem(c, problemID)
 	})
-	app.Post("/create_contest", add_contest.AddContests)
+	app.Post("/create_contest", add_contest.AddContest)
+	app.Post("/create_problem", add_problem.AddProblem)
 	app.Listen(":8080")
 
 }
