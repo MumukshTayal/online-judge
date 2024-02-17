@@ -7,6 +7,8 @@ import (
 	"github.com/MumukshTayal/online-judge/add_problem"
 	"github.com/MumukshTayal/online-judge/config"
 	"github.com/MumukshTayal/online-judge/controllers"
+	"github.com/MumukshTayal/online-judge/edit_userProfile"
+	"github.com/MumukshTayal/online-judge/fetch_userProfile"
 	"github.com/MumukshTayal/online-judge/get_contest"
 	"github.com/MumukshTayal/online-judge/get_problem"
 	"github.com/gofiber/fiber/v2"
@@ -68,9 +70,25 @@ func main() {
 		}
 		return c.JSON(problems)
 	})
+	app.Get("/fetch_profile", func(c *fiber.Ctx) error {
+		userIDStr := c.Query("user_id")
+		userID, err := strconv.Atoi(userIDStr)
+		if err != nil {
+			return err
+		}
+
+		userProfile, err := fetch_userProfile.GetUserProfileByUserId(c, userID)
+		if err != nil {
+			return err
+		}
+		return c.JSON(userProfile)
+	})
+
 	app.Post("/create_contest", add_contest.AddContest)
 	app.Post("/create_problem", add_problem.AddProblem)
 	app.Post("/add_problems_to_contest", add_contest.AddProblemIDandContestIDtoTable)
+	app.Post("/edit_profile", edit_userProfile.EditUserProfile)
+
 	app.Listen(":8080")
 
 }
