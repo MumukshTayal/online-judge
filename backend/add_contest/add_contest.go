@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -54,6 +56,8 @@ type Contest struct {
 }
 
 type Distribute struct {
+	ContestID  int   `json:"contest_id"`
+	ProblemIDs []int `json:"problems_in_contest"`
 }
 
 func AddContestsToContestTable(c *fiber.Ctx, db *sql.DB) error {
@@ -127,5 +131,26 @@ func AddProblemIDandContestIDtoTable(c *fiber.Ctx) error {
 	}
 	defer db.Close()
 
-	return nil
+	var distribute Distribute
+	if err := c.BodyParser(&distribute); err != nil {
+		return err
+	}
+
+	stmt, err := db.Prepare("INSERT INTO distribute_problems_to_contest (contest_id, problem_id) VALUES (?, ?)")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	addedProblems := make([]string, 0)
+	for _, problemID := range distribute.ProblemIDs {
+		_, err := stmt.Exec(distribute.ContestID, problemID)
+		if err != nil {
+			return err
+		}
+		addedProblems = append(addedProblems, strconv.Itoa(problemID))
+	}
+
+	responseMessage := fmt.Sprintf("Problems %s added to contest %d successfully", strings.Join(addedProblems, ", "), distribute.ContestID)
+	return c.SendString(responseMessage)
 }
