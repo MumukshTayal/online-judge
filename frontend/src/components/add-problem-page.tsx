@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { CardTitle, CardDescription, CardHeader, CardContent, Card } from "@/components/ui/card"
 
-export function AddProblemPage() {
+export default function AddProblemPage() {
   return (
     <div key="1" className="grid max-w-6xl w-full gap-6 p-4 mx-auto lg:grid-cols-3 lg:gap-10">
       <div className="space-y-4 lg:col-span-2">
@@ -97,15 +97,6 @@ export function AddProblemPage() {
             required
           />
         </div>
-        <div className="space-y-2">
-          <Label>Test Cases</Label>
-          <Textarea
-            className="min-h-[200px]"
-            id="test-cases"
-            placeholder="Add your test cases in the format input1,input2|output1,output2"
-            required
-          />
-        </div>
         <div className="flex flex-col gap-2 min-[400px]:flex-row justify-center">
           <Button className="w-full" type="submit">
             Create Problem
@@ -129,8 +120,8 @@ export function AddProblemPage() {
             <li>Add any constraints in the 'Constraints' textarea.</li>
             <li>Include sample input in the 'Sample Input' textarea.</li>
             <li>Specify the expected output in the 'Sample Output' textarea.</li>
-            <li>Add test cases in the 'Test Cases' textarea.</li>
             <li>Click the 'Create Problem' button to finalize the process.</li>
+            <li>Add test cases using the 'Add Test Cases' page.</li>
           </ol>
         </CardContent>
       </Card>

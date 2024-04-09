@@ -4,7 +4,7 @@
  */
 import { CardTitle, CardDescription, CardHeader, CardFooter, Card } from "@/components/ui/card"
 
-export function HomePage() {
+export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="px-4 lg:px-6 h-14 flex items-center">
@@ -13,20 +13,17 @@ export function HomePage() {
           <span className="sr-only">Online Judge</span>
         </a>
         <nav className="ml-auto flex gap-4 sm:gap-6">
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="#">
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/contest-list">
             Contests
           </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="#">
-            Problems
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-problem">
+            Add Problem 
           </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="#">
-            Submissions
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/submissions">
+            Submissions 
           </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="#">
-            Leaderboard
-          </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="#">
-            About Us
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-testcase">
+            Add Test Cases 
           </a>
         </nav>
       </header>

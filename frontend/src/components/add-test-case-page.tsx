@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
-export function AddTestCasePage() {
+export default function AddTestCasePage() {
   return (
     <div className="mx-auto max-w-3xl px-4">
       <div className="space-y-6">

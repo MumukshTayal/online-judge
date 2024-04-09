@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 
-export function CreateContest() {
+export default function CreateContest() {
   return (
     <div className="py-6 w-full space-y-6">
       <div>

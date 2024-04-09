@@ -1,14 +1,12 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
-	"net/http"
 	"os"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
@@ -44,33 +42,20 @@ func init() {
 func main() {
 	app := fiber.New()
 
-	app.Get("/google_login", func(c *fiber.Ctx) error {
-		url := googleOauthConfig.AuthCodeURL(oauthStateString)
-		return c.Redirect(url)
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowMethods: "GET,POST,PUT,DELETE,HEAD",
+	}))
+
+	app.Post("/verify_creds", func(c *fiber.Ctx) error {
+		fmt.Println("creds verified")
+		return c.JSON("cool!")
 	})
 
-	app.Get("/google_callback", func(c *fiber.Ctx) error {
-		code := c.Query("code")
-		token, err := googleOauthConfig.Exchange(context.Background(), code)
-		if err != nil {
-			return err
-		}
-
-		userInfo, err := getUserInfo(token.AccessToken)
-		if err != nil {
-			return err
-		}
-
-		// Now you have userInfo, you can use it as needed
-		// For example, store the email in the session or database
-		sessionEmail := userInfo.Email
-
-		fmt.Println("session email --> ", sessionEmail)
-
-		return c.JSON(userInfo)
+	app.Post("/login", func(c *fiber.Ctx) error {
+		fmt.Println("login post request received")
+		return c.JSON("cool!")
 	})
-
-	// Your existing routes...
 
 	app.Get("/get_all_contests_users_pairs", get_contest.GetContestUsers)
 	app.Get("/get_contests_by_userId", func(c *fiber.Ctx) error {
@@ -145,28 +130,4 @@ func main() {
 	app.Post("/edit_profile", edit_userProfile.EditUserProfile)
 
 	app.Listen(":8080")
-}
-
-func getUserInfo(accessToken string) (*UserInfo, error) {
-	resp, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + accessToken)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	var userInfo UserInfo
-	err = json.NewDecoder(resp.Body).Decode(&userInfo)
-	if err != nil {
-		return nil, err
-	}
-
-	return &userInfo, nil
-}
-
-type UserInfo struct {
-	ID       string `json:"id"`
-	Email    string `json:"email"`
-	Name     string `json:"name"`
-	Picture  string `json:"picture"`
-	Verified bool   `json:"verified_email"`
 }

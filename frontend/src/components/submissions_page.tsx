@@ -5,7 +5,7 @@
 import { CardTitle, CardHeader, CardContent, Card } from "@/components/ui/card"
 import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@/components/ui/table"
 
-export function SubmissionsPage() {
+export default function SubmissionsPage() {
   return (
     <Card className="h-full w-full max-w-3xl">
       <CardHeader>
