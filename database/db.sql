@@ -1,11 +1,8 @@
-/* added */ 
 CREATE TABLE user_profile (
-  user_id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_name VARCHAR(255),
-  user_email VARCHAR(255) UNIQUE,
+  user_email VARCHAR(255) PRIMARY KEY,
+  user_name VARCHAR(255)
 );
 
-/* added */ 
 CREATE TABLE contest (
   contest_id INTEGER PRIMARY KEY AUTOINCREMENT,
   contest_title VARCHAR(255) UNIQUE,
@@ -13,11 +10,10 @@ CREATE TABLE contest (
   contest_start_time DATETIME,
   contest_end_time DATETIME,
   is_public BOOLEAN,
-  creator_id INT,
-  FOREIGN KEY (creator_id) REFERENCES user_profile(user_id)
+  creator_email VARCHAR(255),
+  FOREIGN KEY (creator_email) REFERENCES user_profile(user_email)
 );
 
-/* added */ 
 CREATE TABLE distribute_problems_to_contest (
     contest_id INT,
     problem_id INT,
@@ -25,7 +21,6 @@ CREATE TABLE distribute_problems_to_contest (
     FOREIGN KEY(problem_id) REFERENCES problem(problem_id)
 );
 
-/* added */ 
 CREATE TABLE testcase (
     testcase_id INTEGER PRIMARY KEY AUTOINCREMENT,
     testcase_input BLOB,
@@ -34,19 +29,17 @@ CREATE TABLE testcase (
     FOREIGN KEY (problem_id) REFERENCES problem(problem_id)
 );
 
-/* added */ 
 CREATE TABLE problem (
   problem_id INTEGER PRIMARY KEY AUTOINCREMENT,
   problem_title VARCHAR(255) UNIQUE,
   problem_description TEXT,
   constraints_desc TEXT,
-  creator_id INT,
+  creator_email VARCHAR(255),
   is_private BOOLEAN,
-  FOREIGN KEY (creator_id) REFERENCES user_profile(user_id)
+  FOREIGN KEY (creator_email) REFERENCES user_profile(user_email)
 ); 
 
 
-/* added */ 
 CREATE TABLE allowed_list (
   contest_id INT,
   language VARCHAR(255),
@@ -55,11 +48,10 @@ CREATE TABLE allowed_list (
   PRIMARY KEY (contest_id, language)
 );
 
-/* added */ 
 CREATE TABLE submission (
   submission_id INTEGER PRIMARY KEY AUTOINCREMENT,
   problem_id INT,
-  user_id INT,
+  user_email VARCHAR(255),
   code TEXT,
   language VARCHAR(255),
   result VARCHAR(255),
@@ -67,23 +59,22 @@ CREATE TABLE submission (
   memory_used INT,
   submission_date_time DATETIME,
   FOREIGN KEY (problem_id) REFERENCES problem(problem_id),
-  FOREIGN KEY (user_id) REFERENCES user_profile(user_id)
+  FOREIGN KEY (user_email) REFERENCES user_profile(user_email)
 );
 
-/* added */ 
 CREATE TABLE contest_user (
   contest_id INT,
-  user_id INT,
-  PRIMARY KEY (contest_id, user_id),
+  user_email VARCHAR(255),
+  PRIMARY KEY (contest_id, user_email),
   FOREIGN KEY (contest_id) REFERENCES contest(contest_id),
-  FOREIGN KEY (user_id) REFERENCES user_profile(user_id)
+  FOREIGN KEY (user_email) REFERENCES user_profile(user_email)
 );
 
 /* added */ 
 CREATE TABLE virtual_contest (
   virutal_contest_id INT PRIMARY KEY,
   contest_id INT,
-  user_id INT,
+  user_email VARCHAR(255),
   FOREIGN KEY (contest_id) REFERENCES contest(contest_id),
-  FOREIGN KEY (user_id) REFERENCES user_profile(user_id)
+  FOREIGN KEY (user_email) REFERENCES user_profile(user_email)
 );
