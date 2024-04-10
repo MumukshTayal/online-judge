@@ -8,86 +8,110 @@ import { Input } from "@/components/ui/input"
 
 export default function CreateContest() {
   return (
-    <div className="py-6 w-full space-y-6">
       <div>
-        <div className="flex items-center space-x-4">
-          <h1 className="text-3xl font-bold tracking-tighter">Create Contest</h1>
-          <Button size="sm" variant="outline">
-            <UserIcon className="w-4 h-4" />
-            Invite Teammates{"\n                  "}
-          </Button>
-        </div>
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="name">Contest Name</Label>
-            <Input id="name" placeholder="Enter contest name" required />
+      <header className="px-4 lg:px-6 h-14 flex items-center">
+        <nav>
+          <a className="flex items-center justify-center" href="/home">
+            <CodeIcon className="h-6 w-6" />
+            <span className="sr-only">Online Judge</span>
+          </a> 
+      </nav>
+        <nav className="ml-auto flex gap-4 sm:gap-6">
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/contest-list">
+            Contests
+          </a>
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-problem">
+            Add Problem 
+          </a>
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/submissions">
+            Submissions 
+          </a>
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-testcase">
+            Add Test Cases 
+          </a>
+        </nav>
+      </header> 
+      <div className="py-6 w-full space-y-6">
+        <div>
+          <div className="flex items-center space-x-4">
+            <h1 className="text-3xl font-bold tracking-tighter">Create Contest</h1>
+            <Button size="sm" variant="outline">
+              <UserIcon className="w-4 h-4" />
+              Invite Teammates{"\n                  "}
+            </Button>
           </div>
-          <div className="grid gap-2 md:grid-cols-2">
+          <div className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="start-time">Start Time</Label>
-              <Input id="start-time" placeholder="Enter start time" required type="datetime-local" />
+              <Label htmlFor="name">Contest Name</Label>
+              <Input id="name" placeholder="Enter contest name" required />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="end-time">End Time</Label>
-              <Input id="end-time" placeholder="Enter end time" required type="datetime-local" />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="problems">Problems</Label>
-            <div className="flex flex-col w-full min-h-[200px] border rounded-lg">
-              <div className="grid w-full grid-cols-2 items-stretch divide-y p-2">
-                <div className="flex w-full items-center justify-between px-2">
-                  <Label className="text-sm font-medium leading-none" htmlFor="problems-0">
-                    A. Two Sum
-                  </Label>
-                  <Button className="h-6 p-1 rounded-md" size="none" type="button" variant="ghost">
-                    <XIcon className="w-4 h-4" />
-                    <span className="sr-only">Remove</span>
-                    <span className="text-lg leading-none -translate-y-px-5">
-                      <XIcon className="w-4 h-4 inline-block" />
-                    </span>
-                  </Button>
-                </div>
-                <div className="flex w-full items-center justify-between px-2">
-                  <Label className="text-sm font-medium leading-none" htmlFor="problems-1">
-                    B. Add Two Numbers
-                  </Label>
-                  <Button className="h-6 p-1 rounded-md" size="none" type="button" variant="ghost">
-                    <XIcon className="w-4 h-4" />
-                    <span className="sr-only">Remove</span>
-                    <span className="text-lg leading-none -translate-y-px-5">
-                      <XIcon className="w-4 h-4 inline-block" />
-                    </span>
-                  </Button>
-                </div>
+            <div className="grid gap-2 md:grid-cols-2">
+              <div className="grid gap-2">
+                <Label htmlFor="start-time">Start Time</Label>
+                <Input id="start-time" placeholder="Enter start time" required type="datetime-local" />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="end-time">End Time</Label>
+                <Input id="end-time" placeholder="Enter end time" required type="datetime-local" />
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Input className="max-w-sm flex-1" placeholder="Enter problem name" type="text" />
-              <Button type="button">+</Button>
+            <div className="space-y-2">
+              <Label htmlFor="problems">Problems</Label>
+              <div className="flex flex-col w-full min-h-[200px] border rounded-lg">
+                <div className="grid w-full grid-cols-2 items-stretch divide-y p-2">
+                  <div className="flex w-full items-center justify-between px-2">
+                    <Label className="text-sm font-medium leading-none" htmlFor="problems-0">
+                      A. Two Sum
+                    </Label>
+                    <Button className="h-6 p-1 rounded-md" size="none" type="button" variant="ghost">
+                      <XIcon className="w-4 h-4" />
+                      <span className="sr-only">Remove</span>
+                      <span className="text-lg leading-none -translate-y-px-5">
+                        <XIcon className="w-4 h-4 inline-block" />
+                      </span>
+                    </Button>
+                  </div>
+                  <div className="flex w-full items-center justify-between px-2">
+                    <Label className="text-sm font-medium leading-none" htmlFor="problems-1">
+                      B. Add Two Numbers
+                    </Label>
+                    <Button className="h-6 p-1 rounded-md" size="none" type="button" variant="ghost">
+                      <XIcon className="w-4 h-4" />
+                      <span className="sr-only">Remove</span>
+                      <span className="text-lg leading-none -translate-y-px-5">
+                        <XIcon className="w-4 h-4 inline-block" />
+                      </span>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Input className="max-w-sm flex-1" placeholder="Enter problem name" type="text" />
+                <Button type="button">+</Button>
+              </div>
             </div>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="emails">Emails</Label>
-            <div className="flex space-x-2">
-              <Input className="max-w-sm flex-1" id="emails" placeholder="Enter email" type="email" />
-              <Button type="button">Add</Button>
+            <div className="space-y-2">
+              <Label htmlFor="emails">Emails</Label>
+              <div className="flex space-x-2">
+                <Input className="max-w-sm flex-1" id="emails" placeholder="Enter email" type="email" />
+                <Button type="button">Add</Button>
+              </div>
+              <div className="flex items-center space-x-2">
+                <UserIcon className="w-4 h-4" />
+                <span className="text-sm font-medium">alice@example.com</span>
+                <Button size="none" variant="ghost">
+                  <XIcon className="w-4 h-4" />
+                  <span className="sr-only">Remove</span>
+                  <XIcon className="w-4 h-4 inline-block" />
+                </Button>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <UserIcon className="w-4 h-4" />
-              <span className="text-sm font-medium">alice@example.com</span>
-              <Button size="none" variant="ghost">
-                <XIcon className="w-4 h-4" />
-                <span className="sr-only">Remove</span>
-                <XIcon className="w-4 h-4 inline-block" />
-              </Button>
+            <div className="flex w-full pt-4">
+              <Button className="ml-auto">Create Contest</Button>
             </div>
-          </div>
-          <div className="flex w-full pt-4">
-            <Button className="ml-auto">Create Contest</Button>
           </div>
         </div>
-      </div>
+      </div> 
     </div>
   )
 }
@@ -113,7 +137,6 @@ function UserIcon(props) {
   )
 }
 
-
 function XIcon(props) {
   return (
     <svg
@@ -130,6 +153,26 @@ function XIcon(props) {
     >
       <path d="M18 6 6 18" />
       <path d="m6 6 12 12" />
+    </svg>
+  )
+} 
+
+function CodeIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="16 18 22 12 16 6" />
+      <polyline points="8 6 2 12 8 18" />
     </svg>
   )
 }

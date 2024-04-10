@@ -13,7 +13,7 @@ export default function HomePage() {
             <CodeIcon className="h-6 w-6" />
             <span className="sr-only">Online Judge</span>
           </a> 
-      </nav>
+        </nav>
         <nav className="ml-auto flex gap-4 sm:gap-6">
           <a className="text-sm font-medium hover:underline underline-offset-4" href="/contest-list">
             Contests

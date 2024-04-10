@@ -25,11 +25,11 @@ export function LoginPage() {
 
     const response = await fetch('http://localhost:8080/login', {
       method: 'POST',
-      header: {
+      headers: {
         'Authorization': `Bearer ${jwtToken}`,
         'Content-Type': 'application/json'
       }
-    });  
+    });   
 
     if (response.ok) {
       const data = await response.json();

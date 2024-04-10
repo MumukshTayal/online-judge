@@ -2,14 +2,16 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
+	"os"
+	"strconv"
 
 	"github.com/MumukshTayal/online-judge/add_contest"
 	"github.com/MumukshTayal/online-judge/add_problem"
@@ -54,6 +56,24 @@ func main() {
 
 	app.Post("/login", func(c *fiber.Ctx) error {
 		fmt.Println("login post request received")
+
+		authHeader := c.Get("Authorization")
+		tokenStr := ""
+		if authHeader != "" {
+			authValue := strings.Split(authHeader, " ")
+			if len(authValue) == 2 && authValue[0] == "Bearer" {
+				tokenStr = authValue[1]
+			}
+		}
+
+		token, err := jwt.Parse(tokenStr, nil)
+		if token == nil {
+			fmt.Println("err --> ", err)
+			return nil
+		}
+		claims, _ := token.Claims.(jwt.MapClaims)
+		fmt.Println("email --> ", claims["email"])
+
 		return c.JSON("cool!")
 	})
 
