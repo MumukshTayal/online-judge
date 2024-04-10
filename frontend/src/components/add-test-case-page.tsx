@@ -7,25 +7,69 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 
 export default function AddTestCasePage() {
-  return (
-    <div className="mx-auto max-w-3xl px-4">
-      <div className="space-y-6">
-        <div className="space-y-2">
-          <Label htmlFor="problem">Problem</Label>
-          <Input id="problem" placeholder="Enter the problem name" type="text" />
+  return ( 
+    <div>
+      <header className="px-4 lg:px-6 h-14 flex items-center">
+        <nav>
+          <a className="flex items-center justify-center" href="/home">
+            <CodeIcon className="h-6 w-6" />
+            <span className="sr-only">Online Judge</span>
+          </a> 
+      </nav>
+        <nav className="ml-auto flex gap-4 sm:gap-6">
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/contest-list">
+            Contests
+          </a>
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-problem">
+            Add Problem 
+          </a>
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/submissions">
+            Submissions 
+          </a>
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-testcase">
+            Add Test Cases 
+          </a>
+        </nav>
+      </header> 
+      <div className="mx-auto max-w-3xl px-4">
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="problem">Problem</Label>
+            <Input id="problem" placeholder="Enter the problem name" type="text" />
+          </div>
+          <div className="space-y-2">
+            <Label>Input</Label>
+            <Input accept=".txt" id="input" type="file" />
+            <div>Upload the input file for the test case. It should be named "input.txt".</div>
+          </div>
+          <div className="space-y-2">
+            <Label>Output</Label>
+            <Input accept=".txt" id="output" type="file" />
+            <div>Upload the output file for the test case. It should be named "output.txt".</div>
+          </div>
+          <Button>Upload</Button>
         </div>
-        <div className="space-y-2">
-          <Label>Input</Label>
-          <Input accept=".txt" id="input" type="file" />
-          <div>Upload the input file for the test case. It should be named "input.txt".</div>
-        </div>
-        <div className="space-y-2">
-          <Label>Output</Label>
-          <Input accept=".txt" id="output" type="file" />
-          <div>Upload the output file for the test case. It should be named "output.txt".</div>
-        </div>
-        <Button>Upload</Button>
-      </div>
+      </div> 
     </div>
+  )
+} 
+
+function CodeIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="16 18 22 12 16 6" />
+      <polyline points="8 6 2 12 8 18" />
+    </svg>
   )
 }

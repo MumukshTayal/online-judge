@@ -8,10 +8,12 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       <header className="px-4 lg:px-6 h-14 flex items-center">
-        <a className="flex items-center justify-center" href="#">
-          <CodeIcon className="h-6 w-6" />
-          <span className="sr-only">Online Judge</span>
-        </a>
+        <nav>
+          <a className="flex items-center justify-center" href="/home">
+            <CodeIcon className="h-6 w-6" />
+            <span className="sr-only">Online Judge</span>
+          </a> 
+      </nav>
         <nav className="ml-auto flex gap-4 sm:gap-6">
           <a className="text-sm font-medium hover:underline underline-offset-4" href="/contest-list">
             Contests
@@ -159,7 +161,6 @@ export default function HomePage() {
     </div>
   )
 }
-
 
 function CodeIcon(props) {
   return (

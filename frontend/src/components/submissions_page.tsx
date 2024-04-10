@@ -7,64 +7,109 @@ import { TableHead, TableRow, TableHeader, TableCell, TableBody, Table } from "@
 
 export default function SubmissionsPage() {
   return (
-    <Card className="h-full w-full max-w-3xl">
-      <CardHeader>
-        <CardTitle className="text-lg">Submissions</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        <div className="border-t border-gray-200 dark:border-gray-800">
-          <div className="relative w-full overflow-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[120px]">Submission ID</TableHead>
-                  <TableHead>Verdict</TableHead>
-                  <TableHead>Time</TableHead>
-                  <TableHead>Language</TableHead>
-                  <TableHead>User</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">#123456</TableCell>
-                  <TableCell>Accepted</TableCell>
-                  <TableCell>2m 35s</TableCell>
-                  <TableCell>Python</TableCell>
-                  <TableCell>User123</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">#123457</TableCell>
-                  <TableCell>Wrong Answer</TableCell>
-                  <TableCell>1m 20s</TableCell>
-                  <TableCell>C++</TableCell>
-                  <TableCell>User456</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">#123458</TableCell>
-                  <TableCell>Runtime Error</TableCell>
-                  <TableCell>3m 45s</TableCell>
-                  <TableCell>Java</TableCell>
-                  <TableCell>User789</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">#123459</TableCell>
-                  <TableCell>Pending</TableCell>
-                  <TableCell>4m 10s</TableCell>
-                  <TableCell>C</TableCell>
-                  <TableCell>User101</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell className="font-medium">#123460</TableCell>
-                  <TableCell>Compilation Error</TableCell>
-                  <TableCell>1m 55s</TableCell>
-                  <TableCell>JavaScript</TableCell>
-                  <TableCell>User202</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+    <div>
+      <header className="px-4 lg:px-6 h-14 flex items-center">
+        <nav>
+          <a className="flex items-center justify-center" href="/home">
+            <CodeIcon className="h-6 w-6" />
+            <span className="sr-only">Online Judge</span>
+          </a> 
+      </nav>
+        <nav className="ml-auto flex gap-4 sm:gap-6">
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/contest-list">
+            Contests
+          </a>
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-problem">
+            Add Problem 
+          </a>
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/submissions">
+            Submissions 
+          </a>
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-testcase">
+            Add Test Cases 
+          </a>
+        </nav>
+      </header> 
+      <Card className="h-full w-full max-w-3xl">
+        <CardHeader>
+          <CardTitle className="text-lg">Submissions</CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          <div className="border-t border-gray-200 dark:border-gray-800">
+            <div className="relative w-full overflow-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[120px]">Submission ID</TableHead>
+                    <TableHead>Verdict</TableHead>
+                    <TableHead>Time</TableHead>
+                    <TableHead>Language</TableHead>
+                    <TableHead>User</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell className="font-medium">#123456</TableCell>
+                    <TableCell>Accepted</TableCell>
+                    <TableCell>2m 35s</TableCell>
+                    <TableCell>Python</TableCell>
+                    <TableCell>User123</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">#123457</TableCell>
+                    <TableCell>Wrong Answer</TableCell>
+                    <TableCell>1m 20s</TableCell>
+                    <TableCell>C++</TableCell>
+                    <TableCell>User456</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">#123458</TableCell>
+                    <TableCell>Runtime Error</TableCell>
+                    <TableCell>3m 45s</TableCell>
+                    <TableCell>Java</TableCell>
+                    <TableCell>User789</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">#123459</TableCell>
+                    <TableCell>Pending</TableCell>
+                    <TableCell>4m 10s</TableCell>
+                    <TableCell>C</TableCell>
+                    <TableCell>User101</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-medium">#123460</TableCell>
+                    <TableCell>Compilation Error</TableCell>
+                    <TableCell>1m 55s</TableCell>
+                    <TableCell>JavaScript</TableCell>
+                    <TableCell>User202</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
+  )
+} 
+
+
+function CodeIcon(props) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polyline points="16 18 22 12 16 6" />
+      <polyline points="8 6 2 12 8 18" />
+    </svg>
   )
 }
