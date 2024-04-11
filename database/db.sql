@@ -27,18 +27,21 @@ CREATE TABLE testcase (
     testcase_output BLOB,
     problem_id INT,
     FOREIGN KEY (problem_id) REFERENCES problem(problem_id)
-);
+); 
 
 CREATE TABLE problem (
   problem_id INTEGER PRIMARY KEY AUTOINCREMENT,
   problem_title VARCHAR(255) UNIQUE,
   problem_description TEXT,
   constraints_desc TEXT,
+  input_format TEXT,
+  output_format TEXT,
+  sample_input TEXT,
+  sample_output TEXT,
   creator_email VARCHAR(255),
   is_private BOOLEAN,
   FOREIGN KEY (creator_email) REFERENCES user_profile(user_email)
 ); 
-
 
 CREATE TABLE allowed_list (
   contest_id INT,
@@ -46,7 +49,7 @@ CREATE TABLE allowed_list (
   time_limit INT,
   memory_limit INT,
   PRIMARY KEY (contest_id, language)
-);
+); 
 
 CREATE TABLE submission (
   submission_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -70,7 +73,6 @@ CREATE TABLE contest_user (
   FOREIGN KEY (user_email) REFERENCES user_profile(user_email)
 );
 
-/* added */ 
 CREATE TABLE virtual_contest (
   virutal_contest_id INT PRIMARY KEY,
   contest_id INT,

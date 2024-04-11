@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CardContent, Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useNavigate } from 'react-router-dom';
 
 export default function ContestList() {
@@ -12,7 +13,7 @@ export default function ContestList() {
 
   const fetchContests = async () => {
     try {
-      const response = await fetch("/api/get_contest");
+      const response = await fetch("http://localhost:8080/api/get_all_contests");
       if (!response.ok) {
         throw new Error('Failed to fetch contests');
       }
@@ -25,7 +26,11 @@ export default function ContestList() {
 
   const handleCreateContestClick = () => {
     navigate("/create-contest");
-  }; 
+  };
+
+  const handleContestClick = (contest) => {
+    navigate(`/contest/${contest.contest_id}`);
+  };
 
   return (
     <div className="flex flex-col h-screen">
@@ -34,20 +39,20 @@ export default function ContestList() {
           <a className="flex items-center justify-center" href="/home">
             <CodeIcon className="h-6 w-6" />
             <span className="sr-only">Online Judge</span>
-          </a> 
+          </a>
         </nav>
         <nav className="ml-auto flex gap-4 sm:gap-6">
           <a className="text-sm font-medium hover:underline underline-offset-4" href="/contest-list">
             Contests
           </a>
           <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-problem">
-            Add Problem 
+            Add Problem
           </a>
           <a className="text-sm font-medium hover:underline underline-offset-4" href="/submissions">
-            Submissions 
+            Submissions
           </a>
           <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-testcase">
-            Add Test Cases 
+            Add Test Cases
           </a>
         </nav>
       </header>
@@ -59,40 +64,42 @@ export default function ContestList() {
               Participate in the latest contests and improve your skills.
             </p>
           </div>
-          <div className="grid grid-cols-1 gap-6"> 
+          <div className="grid grid-cols-1 gap-6">
             <Card onClick={handleCreateContestClick} className="cursor-pointer">
               <CardContent className="p-4 md:p-6">
                 {/* Create Contest button */}
-                <button className="text-lg font-semibold text-gray-900 hover:text-gray-700 focus:outline-none">
-                  Create Contest
-                </button>
+                <Button variant="outline">Create Contest</Button>
               </CardContent>
             </Card>
             {/* Display fetched contests */}
-            {contests.map(contest => (
-              <Card key={contest.id}>
-                <CardContent className="p-4 md:p-6 cursor-pointer">
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-semibold">{contest.name}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{contest.description}</p>
-                    <div className="flex items-center space-x-2 text-sm">
-                      <ClockIcon className="w-4 h-4 text-gray-500" />
-                      <time dateTime={contest.startTime}>{contest.startTime}</time>
+            {contests && contests.length > 0 ? ( 
+              contests.map(contest => (
+                <Card key={contest.contest_id} onClick={() => handleContestClick(contest)} className="cursor-pointer">
+                  <CardContent className="p-4 md:p-6">
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-semibold">{contest.contest_title}</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{contest.contest_description}</p>
+                      <div className="flex items-center space-x-2 text-sm">
+                        <ClockIcon className="w-4 h-4 text-gray-500" />
+                        <time dateTime={contest.start_time}>{new Date(contest.start_time).toLocaleString()}</time>
+                      </div>
+                      <div className="flex items-center space-x-2 text-sm">
+                        <ClockIcon className="w-4 h-4" />
+                        <time dateTime={contest.end_time}>{new Date(contest.end_time).toLocaleString()}</time>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2 text-sm">
-                      <ClockIcon className="w-4 h-4" />
-                      <time dateTime={contest.endTime}>{contest.endTime}</time>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <p>No contests available.</p>
+            )}
           </div>
         </section>
       </main>
     </div>
-  )
-} 
+  );
+}
 
 function ClockIcon(props) {
   return (
@@ -111,8 +118,8 @@ function ClockIcon(props) {
       <circle cx="12" cy="12" r="10" />
       <polyline points="12 6 12 12 16 14" />
     </svg>
-  )
-} 
+  );
+}
 
 function CodeIcon(props) {
   return (
@@ -131,5 +138,5 @@ function CodeIcon(props) {
       <polyline points="16 18 22 12 16 6" />
       <polyline points="8 6 2 12 8 18" />
     </svg>
-  )
+  );
 }

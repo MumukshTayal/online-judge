@@ -98,36 +98,6 @@ func main() {
 		return c.JSON("User added successfully!")
 	})
 
-	app.Get("/get_all_contests_users_pairs", get_contest.GetContestUsers)
-
-	app.Get("/get_contests_by_userId", func(c *fiber.Ctx) error {
-		userIDStr := c.Query("user_id")
-		userId, err := strconv.Atoi(userIDStr)
-		if err != nil {
-			return err
-		}
-
-		contests, err := get_contest.GetContestByUserId(c, userId)
-		if err != nil {
-			return err
-		}
-		return c.JSON(contests)
-	})
-
-	app.Get("/get_contest_detail_by_contestId", func(c *fiber.Ctx) error {
-		contestIDStr := c.Query("contest_id")
-		contestId, err := strconv.Atoi(contestIDStr)
-		if err != nil {
-			return err
-		}
-
-		contests, err := get_contest.GetContestDetails(c, contestId)
-		if err != nil {
-			return err
-		}
-		return c.JSON(contests)
-	})
-
 	app.Get("/get_problem_by_problemId", func(c *fiber.Ctx) error {
 		problemIDStr := c.Query("problem_id")
 		problemID, err := strconv.Atoi(problemIDStr)
@@ -166,9 +136,9 @@ func main() {
 		return c.JSON(userProfile)
 	})
 
-	app.Post("/create_contest", add_contest.AddContest)
+	app.Post("/api/create_contest", add_contest.AddContest)
 	app.Post("/api/create_problem", add_problem.AddProblem)
-	app.Post("/add_problems_to_contest", add_contest.AddProblemIDandContestIDtoTable)
+	app.Get("/api/get_all_contests", get_contest.GetAllContests)
 	app.Post("/edit_profile", edit_userProfile.EditUserProfile)
 
 	app.Listen(":8080")
