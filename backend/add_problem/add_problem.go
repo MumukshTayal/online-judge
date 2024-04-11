@@ -5,13 +5,33 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
 func AddProblem(c *fiber.Ctx) error {
+	authHeader := c.Get("Authorization")
+	tokenStr := ""
+	if authHeader != "" {
+		authValue := strings.Split(authHeader, " ")
+		if len(authValue) == 2 && authValue[0] == "Bearer" {
+			tokenStr = authValue[1]
+		}
+	}
+
+	token, errr := jwt.Parse(tokenStr, nil)
+	if token == nil {
+		fmt.Println("err --> ", errr)
+		return nil
+	}
+	claims, _ := token.Claims.(jwt.MapClaims)
+	fmt.Println("email --> ", claims["email"])
+
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatalf("Some error occured. Err: %s", err)
@@ -34,7 +54,9 @@ func AddProblem(c *fiber.Ctx) error {
 	}
 	defer db.Close()
 
-	if err := AddProblemtoProblemTable(c, db); err != nil {
+	var creator_email = claims["email"]
+
+	if err := AddProblemtoProblemTable(c, db, creator_email.(string)); err != nil {
 		return err
 	}
 
@@ -44,26 +66,35 @@ func AddProblem(c *fiber.Ctx) error {
 
 type Problem struct {
 	ProblemID          int    `json:"problem_id"`
-	ProblemTitle       string `json:"problem_title"`
-	ProblemDescription string `json:"problem_description"`
-	ProblemConstraints string `json:"problem_constraints"`
-	CreatorID          int    `json:"creator_id"`
-	IsPrivate          bool   `json:"is_private"`
+	ProblemTitle       string `json:"title"`
+	ProblemDescription string `json:"statement"`
+	ProblemConstraints string `json:"constraints"`
+	SampleInput        string `json:"sampleInput"`
+	SampleOutput       string `json:"sampleOutput"`
+	InputFormat        string `json:"input"`
+	OutputFormat       string `json:"output"`
+	IsPrivate          string `json:"isPrivate"`
 }
 
-func AddProblemtoProblemTable(c *fiber.Ctx, db *sql.DB) error {
+func AddProblemtoProblemTable(c *fiber.Ctx, db *sql.DB, email string) error {
 	var problem Problem
 	if err := c.BodyParser(&problem); err != nil {
 		return err
 	}
 
-	stmt, err := db.Prepare("INSERT INTO problem (problem_title, problem_description, constraints_desc, creator_id, is_private) VALUES (?, ?, ?, ?, ?)")
+	b, err := strconv.ParseBool(problem.IsPrivate)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+
+	stmt, err := db.Prepare("INSERT INTO problem (problem_title, problem_description, constraints_desc, input_format, output_format, sample_input, sample_output, creator_email, is_private) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(problem.ProblemTitle, problem.ProblemDescription, problem.ProblemConstraints, problem.CreatorID, problem.IsPrivate)
+	_, err = stmt.Exec(problem.ProblemTitle, problem.ProblemDescription, problem.ProblemConstraints, problem.InputFormat, problem.OutputFormat, problem.SampleInput, problem.SampleOutput, email, b)
 	if err != nil {
 		return err
 	}

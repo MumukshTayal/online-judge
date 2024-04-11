@@ -1,8 +1,27 @@
+import { useState, useEffect } from 'react';
 import { CardContent, Card } from "@/components/ui/card";
 import { useNavigate } from 'react-router-dom';
 
 export default function ContestList() {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const [contests, setContests] = useState([]);
+
+  useEffect(() => {
+    fetchContests();
+  }, []);
+
+  const fetchContests = async () => {
+    try {
+      const response = await fetch("/api/get_contest");
+      if (!response.ok) {
+        throw new Error('Failed to fetch contests');
+      }
+      const data = await response.json();
+      setContests(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handleCreateContestClick = () => {
     navigate("/create-contest");
@@ -49,71 +68,25 @@ export default function ContestList() {
                 </button>
               </CardContent>
             </Card>
-            {/* Rest of your cards */}
-            <Card>
-              <CardContent className="p-4 md:p-6 cursor-pointer">
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold">CodeSprint</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">A 3-hour coding competition.</p>
-                  <div className="flex items-center space-x-2 text-sm">
-                    <ClockIcon className="w-4 h-4 text-gray-500" />
-                    <time dateTime="2023-03-16T10:24:00">Starts at 10:24 AM</time>
+            {/* Display fetched contests */}
+            {contests.map(contest => (
+              <Card key={contest.id}>
+                <CardContent className="p-4 md:p-6 cursor-pointer">
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-semibold">{contest.name}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{contest.description}</p>
+                    <div className="flex items-center space-x-2 text-sm">
+                      <ClockIcon className="w-4 h-4 text-gray-500" />
+                      <time dateTime={contest.startTime}>{contest.startTime}</time>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm">
+                      <ClockIcon className="w-4 h-4" />
+                      <time dateTime={contest.endTime}>{contest.endTime}</time>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2 text-sm">
-                    <ClockIcon className="w-4 h-4" />
-                    <time dateTime="2023-03-16T13:24:00">Ends at 1:24 PM</time>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 md:p-6 cursor-pointer">
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold">CodeMaster</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">A 2-hour coding competition.</p>
-                  <div className="flex items-center space-x-2 text-sm">
-                    <ClockIcon className="w-4 h-4 text-gray-500" />
-                    <time dateTime="2023-03-16T10:24:00">Starts at 10:24 AM</time>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm">
-                    <ClockIcon className="w-4 h-4" />
-                    <time dateTime="2023-03-16T13:24:00">Ends at 1:24 PM</time>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 md:p-6 cursor-pointer">
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold">HackDay</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">A 4-hour coding competition.</p>
-                  <div className="flex items-center space-x-2 text-sm">
-                    <ClockIcon className="w-4 h-4 text-gray-500" />
-                    <time dateTime="2023-03-16T10:24:00">Starts at 10:24 AM</time>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm">
-                    <ClockIcon className="w-4 h-4" />
-                    <time dateTime="2023-03-16T13:24:00">Ends at 1:24 PM</time>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 md:p-6 cursor-pointer">
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold">AlgoQuest</h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">A 1-hour coding competition.</p>
-                  <div className="flex items-center space-x-2 text-sm">
-                    <ClockIcon className="w-4 h-4 text-gray-500" />
-                    <time dateTime="2023-03-16T10:24:00">Starts at 10:24 AM</time>
-                  </div>
-                  <div className="flex items-center space-x-2 text-sm">
-                    <ClockIcon className="w-4 h-4" />
-                    <time dateTime="2023-03-16T13:24:00">Ends at 1:24 PM</time>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </section>
       </main>

@@ -23,7 +23,7 @@ export function LoginPage() {
     localStorage.setItem('jwtToken', idToken);
     setJwtToken(idToken);
 
-    const response = await fetch('http://localhost:8080/login', {
+    const response = await fetch('http://localhost:8080/api/login', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${jwtToken}`,
