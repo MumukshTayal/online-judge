@@ -8,6 +8,8 @@ import SubmissionsPage from './components/submissions_page.tsx'
 import AddProblemPage from './components/add-problem-page.tsx'
 import AddTestCasePage from './components/add-test-case-page.tsx'
 import ContestView from './components/contest-view.tsx'
+import ProblemView from './components/problem-view.tsx'
+
 import './index.css'
 
 import {
@@ -31,6 +33,10 @@ const router = createBrowserRouter([
   {
     path: "/contest/:contestId", 
     element: <ContestView />
+  },
+  {
+    path: "/problem/:problemId", 
+    element: <ProblemView />
   },
   {
     path: "/create-contest",

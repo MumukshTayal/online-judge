@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, Route, useParams } from 'react-router-dom';
 import Timer from './timer.tsx';
 import { CardTitle, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 export default function ContestView() {
   const { contestId } = useParams();
   const [contest, setContest] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchContest = async () => {
@@ -25,6 +26,10 @@ export default function ContestView() {
 
     fetchContest();
   }, [contestId]);
+
+  const handleProblemClick = (problemId) => {
+    navigate(`/problem/${problemId}`);
+  };
 
   if (!contest) {
     return <div>Loading...</div>;
@@ -62,13 +67,11 @@ export default function ContestView() {
                 <span className="font-semibold">Time remaining:</span>
               </div>
               <div className="flex items-center gap-0.5">
-                {/* Use the Timer component here */}
                 <Timer endTime={contest.contest.end_time} />
               </div>
             </div>
           </div>
           <div className="grid gap-4">
-            {/* Map through contest problems */}
             {contest.contest_problems.map(problem => (
               <Card key={problem.problem_id}>
                 <CardHeader className="flex items-center space-x-2">
@@ -83,7 +86,8 @@ export default function ContestView() {
                   </p>
                 </CardContent>
                 <CardFooter>
-                  <Button size="sm">View</Button>
+                  {/* Add onClick event to navigate to ProblemView with problem_id */}
+                  <Button size="sm" onClick={() => handleProblemClick(problem.problem_id)}>View</Button>
                 </CardFooter>
               </Card>
             ))}
@@ -146,4 +150,4 @@ function ClockIcon(props) {
       <polyline points="12 6 12 12 16 14" />
     </svg>
   )
-} 
+}
