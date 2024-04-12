@@ -7,7 +7,9 @@ import ContestList from './components/contest-list.tsx'
 import SubmissionsPage from './components/submissions_page.tsx'
 import AddProblemPage from './components/add-problem-page.tsx'
 import AddTestCasePage from './components/add-test-case-page.tsx'
+import ContestView from './components/contest-view.tsx'
 import './index.css'
+
 import {
   createBrowserRouter,
   RouterProvider,
@@ -25,6 +27,10 @@ const router = createBrowserRouter([
   {
     path: "/contest-list",
     element: <ContestList />
+  },
+  {
+    path: "/contest/:contestId", 
+    element: <ContestView />
   },
   {
     path: "/create-contest",

@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { CardContent, Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Route } from 'react-router-dom';
+import ContestView from './contest-view.tsx';
 
 export default function ContestList() {
   const navigate = useNavigate();
@@ -140,3 +141,6 @@ function CodeIcon(props) {
     </svg>
   );
 }
+
+// Add the Route component to handle the ContestView component
+<Route path="/contest/:contestId" element={<ContestView />} />

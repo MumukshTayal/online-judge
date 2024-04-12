@@ -17,6 +17,7 @@ import (
 	"github.com/MumukshTayal/online-judge/edit_userProfile"
 	"github.com/MumukshTayal/online-judge/fetch_userProfile"
 	"github.com/MumukshTayal/online-judge/get_contest"
+	"github.com/MumukshTayal/online-judge/get_contest_details"
 	"github.com/MumukshTayal/online-judge/get_problem"
 
 	"github.com/joho/godotenv"
@@ -140,6 +141,7 @@ func main() {
 	app.Post("/api/create_problem", add_problem.AddProblem)
 	app.Get("/api/get_all_contests", get_contest.GetAllContests)
 	app.Post("/edit_profile", edit_userProfile.EditUserProfile)
+	app.Get("/api/get_contest_details/:contestId", get_contest_details.GetContestDetails)
 
 	app.Listen(":8080")
 }
