@@ -3,6 +3,7 @@ import { CardContent, Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate, Route } from 'react-router-dom';
 import ContestView from './contest-view.tsx';
+import Navbar from "./navbar.tsx"
 
 export default function ContestList() {
   const navigate = useNavigate();
@@ -35,28 +36,7 @@ export default function ContestList() {
 
   return (
     <div className="flex flex-col h-screen">
-      <header className="px-4 lg:px-6 h-14 flex items-center">
-        <nav>
-          <a className="flex items-center justify-center" href="/home">
-            <CodeIcon className="h-6 w-6" />
-            <span className="sr-only">Online Judge</span>
-          </a>
-        </nav>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="/contest-list">
-            Contests
-          </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-problem">
-            Add Problem
-          </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="/submissions">
-            Submissions
-          </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-testcase">
-            Add Test Cases
-          </a>
-        </nav>
-      </header>
+      <Navbar />
       <main className="flex-1 overflow-y-auto">
         <section className="container py-6 space-y-6 text-gray-900 md:space-y-8 dark:text-gray-50">
           <div className="space-y-2">
@@ -68,8 +48,7 @@ export default function ContestList() {
           <div className="grid grid-cols-1 gap-6">
             <Card onClick={handleCreateContestClick} className="cursor-pointer">
               <CardContent className="p-4 md:p-6">
-                {/* Create Contest button */}
-                <Button variant="outline">Create Contest</Button>
+                Create Contest
               </CardContent>
             </Card>
             {/* Display fetched contests */}

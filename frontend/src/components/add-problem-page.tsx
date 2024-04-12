@@ -5,6 +5,7 @@ import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { CardTitle, CardDescription, CardHeader, CardContent, Card } from "@/components/ui/card"
+import Navbar from "./navbar.tsx"
 
 export default function AddProblemPage() { 
   const [jwtToken, setJwtToken] = useState(''); 
@@ -60,28 +61,7 @@ export default function AddProblemPage() {
 
   return (
     <div>
-      <header className="px-4 lg:px-6 h-14 flex items-center">
-        <nav>
-          <a className="flex items-center justify-center" href="/home">
-            <CodeIcon className="h-6 w-6" />
-            <span className="sr-only">Online Judge</span>
-          </a> 
-      </nav>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="/contest-list">
-            Contests
-          </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-problem">
-            Add Problem 
-          </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="/submissions">
-            Submissions 
-          </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-testcase">
-            Add Test Cases 
-          </a>
-        </nav>
-      </header> 
+      <Navbar />
       <div key="1" className="grid max-w-6xl w-full gap-6 p-4 mx-auto lg:grid-cols-3 lg:gap-10">
         <div className="space-y-4 lg:col-span-2">
           <div className="space-y-2">

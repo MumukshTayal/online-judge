@@ -4,6 +4,7 @@ import Timer from './timer.tsx';
 import { CardTitle, CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import Navbar from "./navbar.tsx"
 
 export default function ContestView() {
   const { contestId } = useParams();
@@ -37,26 +38,7 @@ export default function ContestView() {
 
   return (
     <div>
-      <header className="px-4 lg:px-6 h-14 flex items-center">
-        <a className="flex items-center justify-center" href="#">
-          <CodeIcon className="h-6 w-6" />
-          <span className="sr-only">Online Judge</span>
-        </a>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="/contest-list">
-            Contests
-          </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-problem">
-            Add Problem 
-          </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="/submissions">
-            Submissions 
-          </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-testcase">
-            Add Test Cases 
-          </a>
-        </nav>
-      </header>
+      <Navbar />
       <main className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="grid gap-4 w-full max-w-3xl p-4 rounded-lg border dark:border-gray-800">
           <div className="flex items-center gap-4">
