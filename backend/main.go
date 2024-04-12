@@ -14,6 +14,7 @@ import (
 
 	"github.com/MumukshTayal/online-judge/add_contest"
 	"github.com/MumukshTayal/online-judge/add_problem"
+	"github.com/MumukshTayal/online-judge/add_testcase"
 	"github.com/MumukshTayal/online-judge/edit_userProfile"
 	"github.com/MumukshTayal/online-judge/fetch_userProfile"
 	"github.com/MumukshTayal/online-judge/get_contest"
@@ -115,8 +116,10 @@ func main() {
 
 	app.Post("/api/create_contest", add_contest.AddContest)
 	app.Post("/api/create_problem", add_problem.AddProblem)
-	app.Get("/api/get_all_contests", get_contest.GetAllContests)
 	app.Post("/edit_profile", edit_userProfile.EditUserProfile)
+	app.Post("/api/add_testcase", add_testcase.AddTestCase)
+
+	app.Get("/api/get_all_contests", get_contest.GetAllContests)
 	app.Get("/api/get_contest_details/:contestId", get_contest_details.GetContestDetails)
 	app.Get("/api/get_problem/:problemId", get_problem.GetProblemByProblemId)
 
