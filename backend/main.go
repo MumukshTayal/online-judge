@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"database/sql"
@@ -21,16 +24,22 @@ import (
 	"github.com/MumukshTayal/online-judge/get_contest_details"
 	"github.com/MumukshTayal/online-judge/get_problem"
 
-	"github.com/joho/godotenv"
-	_ "github.com/tursodatabase/libsql-client-go/libsql"
 	"log"
 	"os"
+
+	"github.com/joho/godotenv"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
 var (
 	googleOauthConfig *oauth2.Config
 	oauthStateString  = "random" // Change this to something more secure in production
+	judgeURL          = "http://judge-server:3001"
 )
+
+type TestJob struct {
+	TestId int
+}
 
 func main() {
 	app := fiber.New()
@@ -112,6 +121,28 @@ func main() {
 			return err
 		}
 		return c.JSON(userProfile)
+	})
+
+	app.Post("/judge/add_to_queue", func(c *fiber.Ctx) error {
+		msg := TestJob{TestId: 1}
+
+		data, err := json.Marshal(msg)
+		if err != nil {
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+
+		resp, err := http.Post(judgeURL, "application/json", bytes.NewReader(data))
+		if err != nil {
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			log.Printf("Received non-OK response status code: %d", resp.StatusCode)
+			return c.SendStatus(http.StatusInternalServerError)
+		}
+
+		return c.SendString("POST request sent successfully")
 	})
 
 	app.Post("/api/create_contest", add_contest.AddContest)

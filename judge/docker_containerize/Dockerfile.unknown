@@ -1,0 +1,17 @@
+FROM alpine:3.17
+
+# Install GCC and Python
+RUN apk add --no-cache gcc musl-dev python3
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the code file into the container
+COPY code.py .
+COPY test_cases.py .
+
+ARG FUNCTION_NAME
+ENV FUNCTION_NAME=$FUNCTION_NAME
+
+# Command to execute when the container starts
+CMD ["python3", "test_cases.py"]
