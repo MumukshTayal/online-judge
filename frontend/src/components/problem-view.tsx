@@ -91,6 +91,14 @@ export default function ProblemView() {
           </Select>
         </div>
       </div>
+      <div className="flex justify-start space-x-4">
+        <button className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded">
+          Run
+        </button>
+        <button className="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded">
+          Submit
+        </button>
+      </div>
     </div>
   )
 }
