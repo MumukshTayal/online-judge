@@ -74,14 +74,15 @@ def main():
 
     list_output_data = output_data.split("\n")
     # print(list_output_data)
+    # list_output_data = list_output_data.split(' ')
     # print(output.stdout)
     actual_output = output.stdout.split("\n")
     for i in range(len(list_output_data)):
-        if int(list_output_data[i]) != int(actual_output[i]):
+        if list_output_data[i] != actual_output[i]:
             print(f"{i}/{len(list_output_data)} test cases Passed") 
             print(f"Expected: {list_output_data[i]}")
             print(f"Actual: {actual_output[i]}")
-            break
+            return
 
     print(f"{len(list_output_data)}/{len(list_output_data)} test cases Passed :)")
 

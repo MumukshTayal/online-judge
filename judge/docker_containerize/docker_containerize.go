@@ -36,6 +36,10 @@ func Containerize(c *fiber.Ctx) (string, error) {
 		return "", err
 	}
 
+	fmt.Println("CODE:", submittedCode.Code)
+	fmt.Println("TESTS INPUT:", submittedCode.TestsInput)
+	fmt.Println("TESTS OUTPUT:", submittedCode.TestsOutput)
+
 	// Create a tar archive from the build context directory
 	buildContextDir := "./docker_containerize/Dockerfile.unknown" // Replace with the path to the directory containing your Dockerfile
 	// codeFilePath := "./docker_containerize/code.py"            // Replace with the path to the code file

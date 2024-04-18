@@ -42,6 +42,7 @@ func main() {
 
 	app.Post("/judge/add_to_queue", func(c *fiber.Ctx) error {
 		fmt.Println("YO YO YO YO YO YO YO!!!")
+		// fmt.Println("BODY:", c.Body())
 		// authHeader := c.Get("Authorization")
 		// tokenStr := ""
 		// if authHeader != "" {
@@ -76,9 +77,11 @@ func main() {
 		// Wait for the result
 		result := <-resultChan
 		if result.Err != nil {
+			fmt.Println("Error processing job:", result.Err)
 			return result.Err
 		}
-
+		fmt.Println("Output:", result.Output)
+		// fmt.Println(result.Output)
 		c.SendString(result.Output)
 		return nil
 	})

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -231,8 +232,9 @@ func main() {
 			log.Printf("Received non-OK response status code: %d", resp.StatusCode)
 			return c.SendStatus(http.StatusInternalServerError)
 		}
-
-		return c.SendString("POST request sent successfully")
+		respBody, err := io.ReadAll(resp.Body)
+		fmt.Println(string(respBody))
+		return c.SendString(string(respBody))
 		// return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		// 	"message": "Code Ran Successfully!",
 		// })
