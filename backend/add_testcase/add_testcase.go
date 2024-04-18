@@ -30,7 +30,7 @@ func AddTestCase(c *fiber.Ctx) error {
 		}
 	}
 
-	fmt.Println("token str --> ", tokenStr)
+	// fmt.Println("token str --> ", tokenStr)
 
 	token, err := jwt.Parse(tokenStr, nil)
 	if token == nil {
@@ -82,10 +82,10 @@ func AddTestCaseToDB(c *fiber.Ctx, db *sql.DB, creatorEmail string) error {
 	testCase.Input = form.File["input"][0]
 	testCase.Output = form.File["output"][0]
 
-	fmt.Println("test case --> ", testCase)
+	// fmt.Println("test case --> ", testCase)
 
 	// Query the problem table to get problem_id and creator_email
-	fmt.Println("before select query! --> ", testCase.ProblemName)
+	// fmt.Println("before select query! --> ", testCase.ProblemName)
 	row := db.QueryRow("SELECT problem_id, creator_email FROM problem WHERE problem_title = ?", testCase.ProblemName)
 	var problemID int
 	var problemCreatorEmail string

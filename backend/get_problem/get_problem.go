@@ -68,6 +68,6 @@ func fetchProblem(db *sql.DB, problemID string) (Problem, error) {
 		return problem, err
 	}
 
-	fmt.Println(problem.ProblemID, problem.ProblemTitle, problem.ProblemDescription, problem.ConstraintsDesc, problem.InputFormat, problem.OutputFormat, problem.SampleInput, problem.SampleOutput, problem.CreatorEmail, problem.IsPrivate)
+	// fmt.Println(problem.ProblemID, problem.ProblemTitle, problem.ProblemDescription, problem.ConstraintsDesc, problem.InputFormat, problem.OutputFormat, problem.SampleInput, problem.SampleOutput, problem.CreatorEmail, problem.IsPrivate)
 	return problem, nil
 }

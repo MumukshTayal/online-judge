@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"sync"
 	"time"
 
@@ -19,6 +20,12 @@ type JobResult struct {
 	Err    error
 }
 
+type PrepareForJuding struct {
+	TestInpt   string `json:"test_input"`
+	TestOutput string `json:"test_output"`
+	TestCode   string `json:"test_code"`
+}
+
 var (
 	jobQueue   = make(chan TestJob, 10)
 	resultChan = make(chan JobResult, 10)
@@ -34,6 +41,28 @@ func main() {
 	}))
 
 	app.Post("/judge/add_to_queue", func(c *fiber.Ctx) error {
+		fmt.Println("YO YO YO YO YO YO YO!!!")
+		// authHeader := c.Get("Authorization")
+		// tokenStr := ""
+		// if authHeader != "" {
+		// 	authValue := strings.Split(authHeader, " ")
+		// 	if len(authValue) == 2 && authValue[0] == "Bearer" {
+		// 		tokenStr = authValue[1]
+		// 	}
+		// }
+		// fmt.Println("TOKEN STR:", tokenStr)
+
+		// Define a struct to hold the JSON data
+		// var requestData PrepareForJuding
+
+		// if err := json.Unmarshal(c.Body(), &requestData); err != nil {
+		// 	fmt.Println("Error unmarshaling JSON:", err)
+		// 	return err
+		// }
+
+		// fmt.Println("Test Input:", requestData.TestInpt)
+		// fmt.Println("Test Output:", requestData.TestOutput)
+		// fmt.Println("Test Code:", requestData.TestCode)
 		var job TestJob
 		job.Ctx = c
 		// err := c.BodyParser(&job)

@@ -21,6 +21,7 @@ CREATE TABLE distribute_problems_to_contest (
     FOREIGN KEY(problem_id) REFERENCES problem(problem_id)
 );
 
+-- Modify testcase table, add a field called hidden which is a boolean
 CREATE TABLE testcase (
     testcase_id INTEGER PRIMARY KEY AUTOINCREMENT,
     testcase_input BLOB,

@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { Avatar } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
 import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@/components/ui/select";
 import Navbar from "./navbar.tsx"
@@ -8,6 +7,17 @@ import Navbar from "./navbar.tsx"
 export default function ProblemView() {
   const { problemId } = useParams();
   const [problem, setProblem] = useState(null);
+  const [code, setCode] = useState("");
+  const [language, setLanguage] = useState("");
+  const [jwtToken, setJwtToken] = useState('');
+  const codeTextareaRef = useRef(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem('jwtToken');
+    if (storedToken) {
+      setJwtToken(storedToken);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchProblem = async () => {
@@ -25,6 +35,33 @@ export default function ProblemView() {
 
     fetchProblem();
   }, [problemId]);
+
+  const handleRunClick = () => {
+    const requestBody = {
+      problem_id: problemId,
+      code: codeTextareaRef.current.value,
+      language: language
+    };
+
+    fetch('http://localhost:8080/api/run_code', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${jwtToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to submit code');
+      }
+
+      console.log('Code submitted successfully');
+    })
+    .catch(error => {
+      console.error('Error submitting code:', error);
+    });
+  };
 
   if (!problem) {
     return <div>Loading...</div>;
@@ -74,7 +111,7 @@ export default function ProblemView() {
       <div className="grid gap-4 md:grid-cols-2">
         <div>
           <h2 className="text-2xl font-bold">Add Your Code</h2>
-          <Textarea placeholder="Enter your code here." />
+          <Textarea ref={codeTextareaRef} placeholder="Enter your code here." />
         </div>
         <div>
           <h2 className="text-2xl font-bold">Select Language</h2>
@@ -92,7 +129,7 @@ export default function ProblemView() {
         </div>
       </div>
       <div className="flex justify-start space-x-4">
-        <button className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded">
+        <button onClick={handleRunClick} className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded">
           Run
         </button>
         <button className="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded">
