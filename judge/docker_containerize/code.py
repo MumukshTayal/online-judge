@@ -1,7 +1,14 @@
 # t = int(input())
-# for i in range(t):
+# for _ in range(t):
 #     l = list(map(int, input().split()))
-#     a = l[0]
-#     b = l[1]
-#     print(a+b)
-print("Hello World")
+#     n, target = l[0], l[1]
+#     arr = list(map(int, input().split()))
+#     hist = {}
+#     for i in range(len(arr)):
+#         if (target - arr[i]) in hist:
+#             print(hist[target - arr[i]], i)
+#             break
+#         else:
+#             hist[arr[i]] = i
+
+dsfjnadn

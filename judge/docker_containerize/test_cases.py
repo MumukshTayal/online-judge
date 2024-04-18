@@ -50,6 +50,7 @@
 #     run_test_cases()
 
 import subprocess
+import time
 
 
 def main():
@@ -57,6 +58,7 @@ def main():
         input_data = file.read()
 
     try:
+        start_time = time.time()
         output = subprocess.run(
             ["python", "code.py"],
             input=input_data,
@@ -64,10 +66,11 @@ def main():
             capture_output=True,
             check=True,
         )
-        
+        total_time = time.time() - start_time
     except subprocess.CalledProcessError as e:
-        print("An error occurred while executing code.py:")
+        print("An error occurred while executing your code:")
         print(e.stderr)
+        return
     
     with open("output.txt", "r") as file:
         output_data = file.read()
@@ -76,15 +79,18 @@ def main():
     # print(list_output_data)
     # list_output_data = list_output_data.split(' ')
     # print(output.stdout)
+    count = 0
     actual_output = output.stdout.split("\n")
     for i in range(len(list_output_data)):
+        count += 1
         if list_output_data[i] != actual_output[i]:
-            print(f"{i}/{len(list_output_data)} test cases Passed") 
-            print(f"Expected: {list_output_data[i]}")
-            print(f"Actual: {actual_output[i]}")
-            return
+            # print(f"{i}/{len(list_output_data)} test cases Passed") 
+            # print(f"Expected: {list_output_data[i]}")
+            # print(f"Actual: {actual_output[i]}")
+            count -= 1
 
-    print(f"{len(list_output_data)}/{len(list_output_data)} test cases Passed :)")
+    print(f"{count}/{len(list_output_data)} test cases Passed :)")
+    print(f"Time Elapsed: {total_time} seconds")
 
 if __name__ == "__main__":
     main()
