@@ -19,46 +19,19 @@ type SubmittedCode struct {
 	Code string `json:"code"`
 }
 
-// func Containerize(c *fiber.Ctx) error {
-
-// 	// Construct the absolute path to the code.py file
-// 	// codeFilePath := "./docker_containerize/code.py"
-
-// 	// Create or truncate the code.py file
-// 	// file, err := os.Create(codeFilePath)
-// 	// if err != nil {
-// 	// 	return err
-// 	// }
-// 	// defer file.Close()
-
-// 	// Write the user-submitted code from the request body to the code.py file
-// 	// err = os.WriteFile(codeFilePath, []byte(submittedCode.Code), 0644)
-// 	// if err != nil {
-// 	// 	return err
-// 	// }
-
-// 	// Call the Containerize function
-// 	err = handler(c)
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	return nil
-// }
-
-func Containerize(c *fiber.Ctx) error {
+func Containerize(c *fiber.Ctx) (string, error) {
 	fmt.Println("INSIDE OOOOOO!!!!!!")
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer cli.Close()
 
 	// Parse the JSON body
 	var submittedCode SubmittedCode
 	if err := c.BodyParser(&submittedCode); err != nil {
-		return err
+		return "", err
 	}
 
 	// Create a tar archive from the build context directory
@@ -67,7 +40,7 @@ func Containerize(c *fiber.Ctx) error {
 	testCasesFilePath := "./docker_containerize/test_cases.py" // Replace with the path to the test cases file
 	buildContextTarReader, err := createTarArchive(buildContextDir, submittedCode.Code, testCasesFilePath)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	imageName := "python_execute:v1"
@@ -79,14 +52,14 @@ func Containerize(c *fiber.Ctx) error {
 	// Build the Docker image from the Dockerfile
 	buildResponse, err := cli.ImageBuild(ctx, buildContextTarReader, types.ImageBuildOptions{Tags: []string{imageName}, BuildArgs: buildArgs})
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer buildResponse.Body.Close()
 
 	// Print the build output
 	_, err = io.Copy(os.Stdout, buildResponse.Body)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// Create a new container
@@ -95,13 +68,13 @@ func Containerize(c *fiber.Ctx) error {
 	}
 	containerResponse, err := cli.ContainerCreate(ctx, config, nil, nil, nil, "")
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// Start the container
 	err = cli.ContainerStart(ctx, containerResponse.ID, container.StartOptions{})
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// Wait for the container to finish
@@ -109,11 +82,11 @@ func Containerize(c *fiber.Ctx) error {
 	select {
 	case err := <-errCh:
 		if err != nil {
-			return err
+			return "", err
 		}
 	case status := <-statusCh:
 		if status.StatusCode != 0 {
-			return fmt.Errorf("Container exited with non-zero status code: %d", status.StatusCode)
+			return "", fmt.Errorf("Container exited with non-zero status code: %d", status.StatusCode)
 		}
 	}
 
@@ -124,26 +97,26 @@ func Containerize(c *fiber.Ctx) error {
 		ShowStderr: true,
 	})
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer out.Close()
 
 	// Copy the container logs to the buffer
 	_, err = stdcopy.StdCopy(&logBuffer, &logBuffer, out)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// Return the log output
-	c.SendString(logBuffer.String())
+	// c.SendString(logBuffer.String())
 
 	// Close and remove the container
 	err = cli.ContainerRemove(ctx, containerResponse.ID, container.RemoveOptions{Force: true})
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return logBuffer.String(), nil
 }
 
 func createTarArchive(dockerfilePath string, codeContent string, testCasesFilePath string) (io.Reader, error) {

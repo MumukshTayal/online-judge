@@ -1,10 +1,6 @@
 package main
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"net/http"
 	"sync"
 	"time"
 
@@ -14,11 +10,18 @@ import (
 )
 
 type TestJob struct {
-	TestId int
+	// TestId int
+	Ctx *fiber.Ctx
+}
+
+type JobResult struct {
+	Output string
+	Err    error
 }
 
 var (
 	jobQueue   = make(chan TestJob, 10)
+	resultChan = make(chan JobResult, 10)
 	queueMutex sync.Mutex
 )
 
@@ -30,19 +33,25 @@ func main() {
 		AllowMethods: "GET,POST,PUT,DELETE,HEAD",
 	}))
 
-	app.Post("/judge/check_sol", docker_containerize.Containerize)
-
 	app.Post("/judge/add_to_queue", func(c *fiber.Ctx) error {
 		var job TestJob
-		err := c.BodyParser(&job)
-		if err != nil {
-			return c.SendStatus(fiber.StatusBadRequest)
-		}
+		job.Ctx = c
+		// err := c.BodyParser(&job)
+		// if err != nil {
+		// 	return c.SendStatus(fiber.StatusBadRequest)
+		// }
 		queueMutex.Lock()
 		jobQueue <- job
 		defer queueMutex.Unlock()
 
-		return c.SendString("Test job added to the queue!")
+		// Wait for the result
+		result := <-resultChan
+		if result.Err != nil {
+			return result.Err
+		}
+
+		c.SendString(result.Output)
+		return nil
 	})
 
 	go func() {
@@ -50,8 +59,9 @@ func main() {
 			// Attempt to receive a job from the queue (non-blocking)
 			select {
 			case job := <-jobQueue:
-				check_solution()
-				fmt.Println("Test Job ID:", job.TestId)
+				output, err := docker_containerize.Containerize(job.Ctx)
+				resultChan <- JobResult{Output: output, Err: err}
+				// fmt.Println("Test Job ID:", job.TestId)
 			default:
 				// No job available, do nothing (avoid busy waiting)
 				time.Sleep(time.Millisecond * 10)
@@ -62,36 +72,44 @@ func main() {
 	app.Listen(":3001")
 }
 
-func check_solution() {
-	url := "http://localhost:3001/judge/check_sol"
+// func check_solution(c *fiber.Ctx) {
 
-	submittedCode := docker_containerize.SubmittedCode{
-		Code: "def add(numbers):\n    return 6",
-	}
-	body, err := json.Marshal(submittedCode)
+// 	str := docker_containerize.Containerize(c)
 
-	if err != nil {
-		fmt.Println("Error encoding JSON:", err)
-		return
-	}
+// 	fmt.Println("STR:", str)
 
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(body))
-	if err != nil {
-		fmt.Println("Error making POST request:", err)
-		return
-	}
-	defer resp.Body.Close()
-	fmt.Println("KI KI KI RRRR:", resp)
-	if resp.StatusCode != http.StatusOK {
-		fmt.Println("Received non-OK response status code:", resp.StatusCode)
-		return
-	}
+// 	// url := "http://localhost:3001/judge/check_sol"
 
-	var responseBody []byte
-	_, err = resp.Body.Read(responseBody)
-	if err != nil {
-		fmt.Println("Error reading response body:", err)
-		return
-	}
-	fmt.Println("Response:", string(responseBody))
-}
+// 	// // testcases_url := "http://localhost:3000/add_to_queue"
+
+// 	// submittedCode := docker_containerize.SubmittedCode{
+// 	// 	Code: "def add(numbers):\n    return 6",
+// 	// }
+// 	// body, err := json.Marshal(submittedCode)
+
+// 	// if err != nil {
+// 	// 	fmt.Println("Error encoding JSON:", err)
+// 	// 	return
+// 	// }
+
+// 	// resp, err := http.Post(url, "application/json", bytes.NewBuffer(body))
+// 	// if err != nil {
+// 	// 	fmt.Println("Error making POST request:", err)
+// 	// 	return
+// 	// }
+// 	// defer resp.Body.Close()
+// 	// fmt.Println("KI KI KI RRRR:", resp)
+// 	// if resp.StatusCode != http.StatusOK {
+// 	// 	fmt.Println("Received non-OK response status code:", resp.StatusCode)
+// 	// 	return
+// 	// }
+
+// 	// var responseBody []byte
+// 	// _, err = resp.Body.Read(responseBody)
+// 	// if err != nil {
+// 	// 	fmt.Println("Error reading response body:", err)
+// 	// 	return
+// 	// }
+// 	// fmt.Println("Response:", string(responseBody))
+
+// }
