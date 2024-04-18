@@ -11,6 +11,7 @@ export default function ProblemView() {
   const [language, setLanguage] = useState("");
   const [jwtToken, setJwtToken] = useState('');
   const codeTextareaRef = useRef(null);
+  const [result, setResult] = useState("");
 
   useEffect(() => {
     const storedToken = localStorage.getItem('jwtToken');
@@ -55,8 +56,11 @@ export default function ProblemView() {
       if (!response.ok) {
         throw new Error('Failed to submit code');
       }
-
-      console.log('Code submitted successfully');
+      return response.text()
+    })
+      .then(result => {
+        console.log("Result:", result)
+        setResult(result);
     })
     .catch(error => {
       console.error('Error submitting code:', error);
@@ -136,6 +140,10 @@ export default function ProblemView() {
           Submit
         </button>
       </div>
+      <div>
+          <h2 className="text-2xl font-bold">Result</h2>
+          <p className="text-gray-500 dark:text-gray-400">{result}</p>
+        </div>
     </div>
   )
 }
