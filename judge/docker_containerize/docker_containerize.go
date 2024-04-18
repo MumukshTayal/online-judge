@@ -16,7 +16,9 @@ import (
 )
 
 type SubmittedCode struct {
-	Code string `json:"code"`
+	Code        string `json:"test_code"`
+	TestsInput  string `json:"test_input"`
+	TestsOutput string `json:"test_output"`
 }
 
 func Containerize(c *fiber.Ctx) (string, error) {
@@ -38,7 +40,7 @@ func Containerize(c *fiber.Ctx) (string, error) {
 	buildContextDir := "./docker_containerize/Dockerfile.unknown" // Replace with the path to the directory containing your Dockerfile
 	// codeFilePath := "./docker_containerize/code.py"            // Replace with the path to the code file
 	testCasesFilePath := "./docker_containerize/test_cases.py" // Replace with the path to the test cases file
-	buildContextTarReader, err := createTarArchive(buildContextDir, submittedCode.Code, testCasesFilePath)
+	buildContextTarReader, err := createTarArchive(buildContextDir, submittedCode.Code, testCasesFilePath, submittedCode.TestsInput, submittedCode.TestsOutput)
 	if err != nil {
 		return "", err
 	}
@@ -119,7 +121,7 @@ func Containerize(c *fiber.Ctx) (string, error) {
 	return logBuffer.String(), nil
 }
 
-func createTarArchive(dockerfilePath string, codeContent string, testCasesFilePath string) (io.Reader, error) {
+func createTarArchive(dockerfilePath string, codeContent string, testCasesFilePath string, testcasesInput string, testcasesOutput string) (io.Reader, error) {
 	var buf bytes.Buffer
 	tw := tar.NewWriter(&buf)
 	defer tw.Close()
@@ -171,7 +173,31 @@ func createTarArchive(dockerfilePath string, codeContent string, testCasesFilePa
 	if err := tw.WriteHeader(testCasesFileHeader); err != nil {
 		return nil, err
 	}
-	if _, err := tw.Write(testCasesFileData); err != nil {
+	if _, err := tw.Write([]byte(testCasesFileData)); err != nil {
+		return nil, err
+	}
+
+	testCasesInputFileHeader := &tar.Header{
+		Name: "input.txt",
+		Size: int64(len(testcasesInput)),
+		Mode: 0644,
+	}
+	if err := tw.WriteHeader(testCasesInputFileHeader); err != nil {
+		return nil, err
+	}
+	if _, err := tw.Write([]byte(testcasesInput)); err != nil {
+		return nil, err
+	}
+
+	testCasesOutputFileHeader := &tar.Header{
+		Name: "output.txt",
+		Size: int64(len(testcasesOutput)),
+		Mode: 0644,
+	}
+	if err := tw.WriteHeader(testCasesOutputFileHeader); err != nil {
+		return nil, err
+	}
+	if _, err := tw.Write([]byte(testcasesOutput)); err != nil {
 		return nil, err
 	}
 
