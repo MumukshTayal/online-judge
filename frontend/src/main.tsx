@@ -17,6 +17,7 @@ import {
   RouterProvider,
 } from "react-router-dom"; 
 import LeaderboardPage from './components/leaderboard.tsx'
+import ProblemsPage from './components/problems-page.tsx'
 
 const router = createBrowserRouter([
   {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
   {
     path: "/add-problem",
     element: <AddProblemPage />
+  },
+  {
+    path: "/problems",
+    element: <ProblemsPage />
   },
   {
     path: "/add-testcase",

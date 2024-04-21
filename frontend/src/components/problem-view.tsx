@@ -137,11 +137,13 @@ export default function ProblemView() {
       <div className="grid gap-4 md:grid-cols-2">
         <div>
           <h2 className="text-2xl font-bold">Sample Input</h2>
-          <p>{problem.SampleInput}</p>
+          {/* <p>{problem.SampleInput}</p> */}
+          <div dangerouslySetInnerHTML={{ __html: problem.SampleInput.replace(/\n/g, '<br>') }} />
         </div>
         <div>
           <h2 className="text-2xl font-bold">Sample Output</h2>
-          <p>{problem.SampleOutput}</p>
+          {/* <p>{problem.SampleOutput}</p> */}
+          <div dangerouslySetInnerHTML={{ __html: problem.SampleOutput.replace(/\n/g, '<br>') }} />
         </div>
       </div>
       <div className="flex items-center space-x-4">
@@ -159,8 +161,6 @@ export default function ProblemView() {
         </div>
         <div>
           <h2 className="text-2xl font-bold">Select Language</h2>
-          {/* Write code for dropdown which gives option of selecting Languages: Python, C++, C
-          Set this language as this going to be used for POST request */}
           <select onChange={(e) => setLanguage(e.target.value)}>
             <option value="python">Python</option>
             <option value="cpp">C++</option>

@@ -3,6 +3,7 @@ import { CardContent, Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate, Route } from 'react-router-dom';
 import ContestView from './contest-view.tsx';
+import { Link } from 'react-router-dom';
 import Navbar from "./navbar.tsx"
 
 export default function ContestList() {
@@ -26,10 +27,6 @@ export default function ContestList() {
     }
   };
 
-  const handleCreateContestClick = () => {
-    navigate("/create-contest");
-  };
-
   const handleContestClick = (contest) => {
     navigate(`/contest/${contest.contest_id}`);
   };
@@ -44,13 +41,18 @@ export default function ContestList() {
             <p className="max-w-prose text-gray-500 md:text-base/relaxed dark:text-gray-400">
               Participate in the latest contests and improve your skills.
             </p>
+            <br></br>
+            <p className="max-w text-gray-500 md:text-base/relaxed dark:text-gray-400">
+            Expand our contest collection by adding new challenges. Contribute to our platform's growth and provide engaging competitions for participants.
+            </p>
+            <Link to="/create-contest">
+              <Button variant="primary" className="w-32 bg-black text-white mt-4">
+                Add Contest
+              </Button>
+            </Link>
           </div>
+          
           <div className="grid grid-cols-1 gap-6">
-            <Card onClick={handleCreateContestClick} className="cursor-pointer">
-              <CardContent className="p-4 md:p-6">
-                Create Contest
-              </CardContent>
-            </Card>
             {/* Display fetched contests */}
             {contests && contests.length > 0 ? ( 
               contests.map(contest => (

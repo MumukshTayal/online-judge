@@ -91,3 +91,7 @@ func fetchAllContests(db *sql.DB) ([]Contest, error) {
 
 	return contests, nil
 }
+
+func ContestList(c *fiber.Ctx) error {
+	return nil
+}

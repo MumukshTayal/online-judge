@@ -109,6 +109,7 @@ export default function CreateContest() {
       <div>
         <Navbar />
         <div className="py-6 w-full space-y-6">
+        <h1 className="text-3xl font-semibold tracking-tighter sm:text-4xl md:text-5xl">Create Contest</h1>
           <div>
             <div className="grid gap-4">
               <div className="grid gap-2">

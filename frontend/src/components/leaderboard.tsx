@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import Navbar from "./navbar.tsx"
 
 export default function LeaderboardPage() {
   const { contestId } = useParams();
@@ -14,7 +15,9 @@ export default function LeaderboardPage() {
       .catch(error => console.error('Error fetching leaderboard:', error));
   }, [contestId]);
 
-  return (
+    return (
+        <div>
+            <Navbar />
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32">
@@ -58,6 +61,7 @@ export default function LeaderboardPage() {
           </div>
         </section>
       </main>
-    </div>
+            </div>
+            </div>
   );
 }

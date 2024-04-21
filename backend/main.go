@@ -268,6 +268,7 @@ func main() {
 	app.Post("/api/add_testcase", add_testcase.AddTestCase)
 
 	app.Get("/api/get_all_contests", get_contest.GetAllContests)
+	app.Get("/api/get_all_problems", get_problem.GetAllProblems)
 	app.Get("/api/get_contest_details/:contestId", get_contest_details.GetContestDetails)
 	app.Get("/api/get_problem/:problemId", get_problem.GetProblemByProblemId)
 	app.Get("/api/get_leaderboard", get_leaderboard.GetLeaderboard)

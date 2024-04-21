@@ -13,15 +13,15 @@ function Navbar() {
           <a className="text-sm font-medium hover:underline underline-offset-4" href="/contest-list">
             Contests
           </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-problem">
-            Add Problem 
+          <a className="text-sm font-medium hover:underline underline-offset-4" href="/problems">
+            Problems
           </a>
           <a className="text-sm font-medium hover:underline underline-offset-4" href="/submissions">
             Submissions 
           </a>
-          <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-testcase">
+          {/* <a className="text-sm font-medium hover:underline underline-offset-4" href="/add-testcase">
             Add Test Cases 
-          </a>
+          </a> */}
         </nav>
       </header>
   )
