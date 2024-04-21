@@ -47,6 +47,7 @@ type TestJob struct {
 
 type Runny struct {
 	ProblemID string `json:"problem_id"`
+	ContestID string `json:"contest_id"`
 	UserEmail string `json:"user_email"`
 	Code      string `json:"code"`
 }
@@ -56,10 +57,17 @@ type Testcase struct {
 	TestOutput []byte
 }
 
+type Constraint struct {
+	TimeLimit int
+	MemLimit  int
+}
+
 type PrepareForJuding struct {
 	TestInpt   string `json:"test_input"`
 	TestOutput string `json:"test_output"`
 	TestCode   string `json:"test_code"`
+	TimeLimit  int    `json:"time_limit"`
+	MemLimit   int    `json:"memory_limit"`
 }
 
 func RetrieveTextFromBlob(inputBlob []byte, outputBlob []byte) (string, string, error) {
@@ -184,6 +192,8 @@ func main() {
 		}
 
 		problemID := runny.ProblemID
+		contestId := runny.ContestID
+		fmt.Println("Contest:", contestId, "Problem:", problemID)
 		err2 := godotenv.Load(".env")
 		if err2 != nil {
 			log.Fatalf("Some error occurred. Err: %s", err2)
@@ -204,6 +214,11 @@ func main() {
 		if err != nil {
 			return err
 		}
+
+		time_limit, mem_limit, err := fetchConstraints(db, contestId)
+		if err != nil {
+			return err
+		}
 		// showTestcases(db)
 		// fmt.Println("User Email:", userEmail)
 		// fmt.Println("KI KI KI RRR IN:")
@@ -215,6 +230,8 @@ func main() {
 			TestInpt:   input,
 			TestOutput: output,
 			TestCode:   runny.Code,
+			TimeLimit:  time_limit,
+			MemLimit:   mem_limit,
 		}
 		// fmt.Println("DAAAAAAAATA:", sendToJudge)
 		data, err := json.Marshal(sendToJudge)
@@ -294,4 +311,24 @@ func fetchTestcases(db *sql.DB, problemID string) (string, string, error) {
 	}
 
 	return inputText, outputText, nil
+}
+func fetchConstraints(db *sql.DB, contestID string) (int, int, error) {
+	var constraint Constraint
+
+	row := db.QueryRow("SELECT time_limit, memory_limit FROM allowed_list WHERE contest_id = ?", contestID)
+	err := row.Scan(&constraint.TimeLimit, &constraint.MemLimit)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println("No constraints for:", contestID)
+			return 0, 0, err
+		}
+
+		fmt.Fprintf(os.Stderr, "failed to scan constraints: %v\n", err)
+		return 0, 0, err
+	}
+
+	time_limit := &constraint.TimeLimit
+	memory_limit := &constraint.MemLimit
+
+	return *time_limit, *memory_limit, nil
 }

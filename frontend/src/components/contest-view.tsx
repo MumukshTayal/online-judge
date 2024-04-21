@@ -29,7 +29,7 @@ export default function ContestView() {
   }, [contestId]);
 
   const handleProblemClick = (problemId) => {
-    navigate(`/problem/${problemId}`);
+    navigate(`/contest/${contestId}/problem/${problemId}`);
   };
 
   if (!contest) {

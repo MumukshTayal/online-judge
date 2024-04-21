@@ -36,7 +36,7 @@ const router = createBrowserRouter([
     element: <ContestView />
   },
   {
-    path: "/problem/:problemId", 
+    path: "/contest/:contestId/problem/:problemId", 
     element: <ProblemView />
   },
   {

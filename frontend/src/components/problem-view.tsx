@@ -5,6 +5,7 @@ import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@
 import Navbar from "./navbar.tsx"
 
 export default function ProblemView() {
+  const { contestId } = useParams();
   const { problemId } = useParams();
   const [problem, setProblem] = useState(null);
   const [code, setCode] = useState("");
@@ -43,6 +44,7 @@ export default function ProblemView() {
     //   return;
     // }
     const requestBody = {
+      contest_id: contestId,
       problem_id: problemId,
       code: codeTextareaRef.current.value,
       language: language
