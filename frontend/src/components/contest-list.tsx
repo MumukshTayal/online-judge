@@ -16,16 +16,27 @@ export default function ContestList() {
 
   const fetchContests = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/get_all_contests");
+      const jwtToken = localStorage.getItem('jwtToken');
+  
+      const response = await fetch("http://localhost:8080/api/get_all_contests", {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`,
+          'Content-Type': 'application/json'
+        },
+      });
+  
       if (!response.ok) {
         throw new Error('Failed to fetch contests');
       }
+  
       const data = await response.json();
       setContests(data);
     } catch (error) {
       console.error(error);
     }
   };
+  
 
   const handleContestClick = (contest) => {
     navigate(`/contest/${contest.contest_id}`);
@@ -61,6 +72,7 @@ export default function ContestList() {
                     <div className="space-y-2">
                       <h3 className="text-lg font-semibold">{contest.contest_title}</h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400">{contest.contest_description}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{contest.is_public}</p>
                       <div className="flex items-center space-x-2 text-sm">
                         <ClockIcon className="w-4 h-4 text-gray-500" />
                         <time dateTime={contest.start_time}>{new Date(contest.start_time).toLocaleString()}</time>
