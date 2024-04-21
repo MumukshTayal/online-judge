@@ -14,7 +14,7 @@ import (
 )
 
 type Submission struct {
-	ProblemID          int       `json:"problem_id"`
+	ProblemID          string    `json:"problem_id"`
 	UserEmail          string    `json:"user_email"`
 	Code               string    `json:"code"`
 	Language           string    `json:"language"`
@@ -83,6 +83,8 @@ func AddSubmission(c *fiber.Ctx) error {
 	// After running the code using judge server, the database of the submission will update to contain:
 	// result, execution_time, memory_used
 	_, err = stmt.Exec(submission.ProblemID, userEmail, submission.Code, submission.Language, submission.Result, submission.ExecutionTime, submission.MemoryUsed, submission.SubmissionDateTime)
+
+	fmt.Println(submission.ProblemID, userEmail, submission.Code, submission.Language, submission.Result, submission.ExecutionTime, submission.MemoryUsed, submission.SubmissionDateTime)
 	if err != nil {
 		return err
 	}

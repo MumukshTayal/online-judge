@@ -16,6 +16,7 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom"; 
+import LeaderboardPage from './components/leaderboard.tsx'
 
 const router = createBrowserRouter([
   {
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
     path: "/add-testcase",
     element: <AddTestCasePage />
   },
+  {
+    path: "contest/:contestId/leaderboard",
+    element: <LeaderboardPage/>
+  }
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(

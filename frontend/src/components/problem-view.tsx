@@ -38,6 +38,10 @@ export default function ProblemView() {
   }, [problemId]);
 
   const handleRunClick = () => {
+    // if (!language) {
+    //   console.error('Please select a language before running.');
+    //   return;
+    // }
     const requestBody = {
       problem_id: problemId,
       code: codeTextareaRef.current.value,
@@ -45,6 +49,41 @@ export default function ProblemView() {
     };
 
     fetch('http://localhost:8080/api/run_code', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${jwtToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to run code');
+      }
+      return response.text()
+    })
+      .then(result => {
+        console.log("Result:", result)
+        setResult(result);
+    })
+    .catch(error => {
+      console.error('Error running code:', error);
+    });
+  };
+
+  const handleSubmit = () => {
+    // if (!language) {
+    //   console.error('Please select a language before running.');
+    //   return;
+
+    const requestBody = {
+      problem_id: problemId,
+      code: codeTextareaRef.current.value,
+      language: language,
+      submission_date_time: new Date().toISOString()
+    };
+
+    fetch('http://localhost:8080/api/submit', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${jwtToken}`,
@@ -70,6 +109,12 @@ export default function ProblemView() {
   if (!problem) {
     return <div>Loading...</div>;
   }
+
+  const handleLanguageSelect = (event) => {
+    const selectedLanguage = event.target.value;
+    console.log("Selected language:", selectedLanguage);
+    setLanguage(selectedLanguage);
+  };
 
   return (
     <div className="w-full px-4 py-6 space-y-6 md:px-6">
@@ -123,11 +168,11 @@ export default function ProblemView() {
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Select language" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="javascript">C</SelectItem>
+            <SelectContent onChange={handleLanguageSelect}>
+              <SelectItem value="c">C</SelectItem>
               <SelectItem value="python">Python</SelectItem>
               <SelectItem value="java">Java</SelectItem>
-              <SelectItem value="typescript">C++</SelectItem>
+              <SelectItem value="cpp">C++</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -136,7 +181,7 @@ export default function ProblemView() {
         <button onClick={handleRunClick} className="bg-white hover:bg-gray-200 text-black font-bold py-2 px-4 rounded">
           Run
         </button>
-        <button className="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded">
+        <button onClick={handleSubmit} className="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded">
           Submit
         </button>
       </div>

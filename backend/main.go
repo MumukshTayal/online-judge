@@ -18,6 +18,7 @@ import (
 
 	"github.com/MumukshTayal/online-judge/add_contest"
 	"github.com/MumukshTayal/online-judge/add_problem"
+	"github.com/MumukshTayal/online-judge/add_submission"
 	"github.com/MumukshTayal/online-judge/add_testcase"
 	"github.com/MumukshTayal/online-judge/edit_userProfile"
 	"github.com/MumukshTayal/online-judge/fetch_userProfile"
@@ -240,7 +241,8 @@ func main() {
 		// })
 	})
 
-	//app.Post("api/run_code", run_code.RunCode)
+	//app.Post("/api/run_code", run_code.RunCode)
+	app.Post("/api/submit", add_submission.AddSubmission)
 	app.Post("/api/create_contest", add_contest.AddContest)
 	app.Post("/api/create_problem", add_problem.AddProblem)
 	app.Post("/edit_profile", edit_userProfile.EditUserProfile)
