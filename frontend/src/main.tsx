@@ -58,6 +58,10 @@ const router = createBrowserRouter([
   {
     path: "contest/:contestId/leaderboard",
     element: <LeaderboardPage/>
+  },
+  {
+    path: "contest/:contestId/submissions",
+    element: <SubmissionsPage/>
   }
 ]);
 

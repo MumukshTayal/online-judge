@@ -1,11 +1,10 @@
-package get_leaderboard
+package get_submissions
 
 import (
 	"database/sql"
 	"fmt"
 	"log"
 	"os"
-	"sort"
 	"strconv"
 	"time"
 
@@ -14,12 +13,6 @@ import (
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
 
-type LeaderboardEntry struct {
-	UserEmail          string
-	Result             int
-	LastSubmissionTime time.Time
-}
-
 type Submission struct {
 	UserID    string
 	ProblemID int
@@ -27,13 +20,7 @@ type Submission struct {
 	Time      time.Time
 }
 
-type UserScore struct {
-	UserID            string
-	TotalScore        int
-	MaxSubmissionTime time.Time
-}
-
-func GetLeaderboard(c *fiber.Ctx) error {
+func GetSubmissions(c *fiber.Ctx) error {
 	err := godotenv.Load(".env")
 	if err != nil {
 		log.Fatalf("Some error occurred. Err: %s", err)
@@ -59,7 +46,7 @@ func GetLeaderboard(c *fiber.Ctx) error {
 	contestIDStr := c.Query("contestId")
 	contestID, err := strconv.Atoi(contestIDStr)
 	if err != nil {
-		fmt.Println("Error Identifying the contestID for Leaderboard!")
+		fmt.Println("Error Identifying the contestID for Submissions!")
 	}
 
 	problemIDs, err := fetchContestProblems(db, contestID)
@@ -71,59 +58,16 @@ func GetLeaderboard(c *fiber.Ctx) error {
 		return c.Status(500).SendString(err.Error())
 	}
 
+	// fmt.Println(problemIDs, userEmails)
+
 	submissions, err := fetchSubmissions(db, userEmails, problemIDs)
 	if err != nil {
 		return c.Status(500).SendString(err.Error())
 	}
 
-	userScores := calculateUserScores(submissions)
+	// fmt.Println(submissions)
 
-	var leaderboard []LeaderboardEntry
-	for _, score := range userScores {
-		leaderboard = append(leaderboard, LeaderboardEntry{
-			UserEmail:          score.UserID,
-			Result:             score.TotalScore,
-			LastSubmissionTime: score.MaxSubmissionTime,
-		})
-	}
-
-	sort.Slice(leaderboard, func(i, j int) bool {
-		if leaderboard[i].Result == leaderboard[j].Result {
-			return leaderboard[i].LastSubmissionTime.After(leaderboard[j].LastSubmissionTime)
-		}
-		return leaderboard[i].Result > leaderboard[j].Result
-	})
-
-	return c.JSON(leaderboard)
-}
-
-func calculateUserScores(submissions map[string][]Submission) map[string]UserScore {
-	userScores := make(map[string]UserScore)
-
-	for userID, userSubmissions := range submissions {
-		totalScore := 0
-		maxSubmissionTime := time.Time{}
-
-		for _, submission := range userSubmissions {
-			score, err := strconv.Atoi(submission.Result)
-			if err != nil {
-				fmt.Println("Error calculating the score of the user.")
-			}
-			totalScore += score
-
-			if submission.Time.After(maxSubmissionTime) {
-				maxSubmissionTime = submission.Time
-			}
-		}
-
-		userScores[userID] = UserScore{
-			UserID:            userID,
-			TotalScore:        totalScore,
-			MaxSubmissionTime: maxSubmissionTime,
-		}
-	}
-
-	return userScores
+	return c.JSON(submissions)
 }
 
 func fetchSubmissions(db *sql.DB, userEmails []string, problemIDs []int) (map[string][]Submission, error) {
@@ -135,7 +79,7 @@ func fetchSubmissions(db *sql.DB, userEmails []string, problemIDs []int) (map[st
 			if err != nil {
 				return nil, err
 			}
-			fmt.Println(rows)
+
 			defer rows.Close()
 
 			for rows.Next() {

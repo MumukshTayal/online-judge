@@ -24,7 +24,9 @@ import (
 	"github.com/MumukshTayal/online-judge/fetch_userProfile"
 	"github.com/MumukshTayal/online-judge/get_contest"
 	"github.com/MumukshTayal/online-judge/get_contest_details"
+	"github.com/MumukshTayal/online-judge/get_leaderboard"
 	"github.com/MumukshTayal/online-judge/get_problem"
+	"github.com/MumukshTayal/online-judge/get_submissions"
 
 	"log"
 	"os"
@@ -251,6 +253,8 @@ func main() {
 	app.Get("/api/get_all_contests", get_contest.GetAllContests)
 	app.Get("/api/get_contest_details/:contestId", get_contest_details.GetContestDetails)
 	app.Get("/api/get_problem/:problemId", get_problem.GetProblemByProblemId)
+	app.Get("/api/get_leaderboard", get_leaderboard.GetLeaderboard)
+	app.Get("/api/get_submissions", get_submissions.GetSubmissions)
 
 	app.Listen(":8080")
 }
