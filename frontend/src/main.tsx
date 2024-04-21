@@ -18,6 +18,7 @@ import {
 } from "react-router-dom"; 
 import LeaderboardPage from './components/leaderboard.tsx'
 import ProblemsPage from './components/problems-page.tsx'
+import AllSubmissionsPage from './components/all_submissions.tsx'
 
 const router = createBrowserRouter([
   {
@@ -46,7 +47,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/submissions",
-    element: <SubmissionsPage />
+    element: <AllSubmissionsPage/>
   },
   {
     path: "/add-problem",

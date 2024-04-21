@@ -44,7 +44,6 @@ func Containerize(c *fiber.Ctx) (string, error) {
 	// fmt.Println("LANGUAGE:", submittedCode.Language)
 
 	// Create a tar archive from the build context directory
-
 	var buildContextDir string
 	switch submittedCode.Language {
 	case "py":

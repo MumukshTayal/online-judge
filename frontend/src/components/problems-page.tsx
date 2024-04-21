@@ -27,7 +27,7 @@ export default function ProblemsPage() {
   return (
     <div className="flex flex-col h-screen">
       <Navbar />
-      <main className="flex-1 overflow-y-auto dark:bg-gray-900">
+      <main className="flex-1 overflow-y-hidden dark:bg-gray-900">
         <section className="container py-6 space-y-6 text-gray-900 md:space-y-8 dark:text-gray-50">
           <div className="space-y-6">
             <b className="text-3xl font-semibold tracking-tighter sm:text-4xl md:text-5xl">Contribute</b>

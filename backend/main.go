@@ -50,6 +50,7 @@ type Runny struct {
 	ContestID string `json:"contest_id"`
 	UserEmail string `json:"user_email"`
 	Code      string `json:"code"`
+	Language  string `json:"language"`
 }
 
 type Testcase struct {
@@ -68,6 +69,7 @@ type PrepareForJuding struct {
 	TestCode   string `json:"test_code"`
 	TimeLimit  int    `json:"time_limit"`
 	MemLimit   int    `json:"memory_limit"`
+	Language   string `json:"language"`
 }
 
 func RetrieveTextFromBlob(inputBlob []byte, outputBlob []byte) (string, string, error) {
@@ -193,6 +195,7 @@ func main() {
 
 		problemID := runny.ProblemID
 		contestId := runny.ContestID
+		lang := runny.Language
 		fmt.Println("Contest:", contestId, "Problem:", problemID)
 		err2 := godotenv.Load(".env")
 		if err2 != nil {
@@ -232,6 +235,7 @@ func main() {
 			TestCode:   runny.Code,
 			TimeLimit:  time_limit,
 			MemLimit:   mem_limit,
+			Language:   lang,
 		}
 		// fmt.Println("DAAAAAAAATA:", sendToJudge)
 		data, err := json.Marshal(sendToJudge)
@@ -269,6 +273,7 @@ func main() {
 
 	app.Get("/api/get_all_contests", get_contest.GetAllContests)
 	app.Get("/api/get_all_problems", get_problem.GetAllProblems)
+	app.Get("/api/get_all_submissions", get_submissions.GetAllSubmissions)
 	app.Get("/api/get_contest_list", get_contest.ContestList)
 	app.Get("/api/get_contest_details/:contestId", get_contest_details.GetContestDetails)
 	app.Get("/api/get_problem/:problemId", get_problem.GetProblemByProblemId)

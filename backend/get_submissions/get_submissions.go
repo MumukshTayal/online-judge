@@ -149,3 +149,71 @@ func fetchContestUsers(db *sql.DB, contestID int) ([]string, error) {
 
 	return userEmails, nil
 }
+
+func GetAllSubmissions(c *fiber.Ctx) error {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatalf("Some error occurred. Err: %s", err)
+	}
+
+	dbName := os.Getenv("DATABASE_NAME")
+	dbToken := os.Getenv("DATABASE_TOKEN")
+
+	url := fmt.Sprintf("libsql://%s.turso.io?authToken=%s", dbName, dbToken)
+
+	db, err := sql.Open("libsql", url)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "failed to open db %s: %s", url, err)
+		return c.Status(500).SendString(err.Error())
+	}
+
+	if err := db.Ping(); err != nil {
+		fmt.Fprintf(os.Stderr, "failed to ping db %s: %s\n", url, err)
+		return c.Status(500).SendString(err.Error())
+	}
+	defer db.Close()
+
+	if err != nil {
+		fmt.Println("Error Identifying the contestID for Submissions!")
+	}
+
+	submissions, err := fetchAllSubmissions(db)
+	if err != nil {
+		return c.Status(500).SendString(err.Error())
+	}
+
+	// fmt.Println(submissions)
+
+	return c.JSON(submissions)
+}
+
+func fetchAllSubmissions(db *sql.DB) ([]Submission, error) {
+	var submissions []Submission
+	rows, err := db.Query("SELECT problem_id, user_email, result, submission_date_time FROM submission")
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var result string
+		var submissionTime time.Time
+		var problemId int
+		var userEmail string
+		if err := rows.Scan(&problemId, &userEmail, &result, &submissionTime); err != nil {
+			return nil, err
+		}
+		submissions = append(submissions, Submission{
+			UserID:    userEmail,
+			ProblemID: problemId,
+			Result:    result,
+			Time:      submissionTime,
+		})
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return submissions, nil
+}

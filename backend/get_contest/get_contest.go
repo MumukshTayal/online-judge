@@ -157,12 +157,10 @@ func ContestList(c *fiber.Ctx) error {
 		return c.Status(500).SendString(err.Error())
 	}
 
-	fmt.Println(participatingContests)
-	fmt.Println(createdContests)
-	// allContests := append(participatingContests, createdContests...)
-
-	// return c.JSON(allContests)
-	return nil
+	return c.JSON(fiber.Map{
+		"participating_contests": participatingContests,
+		"created_contests":       createdContests,
+	})
 }
 
 func getParticipatingContests(userEmail string, db *sql.DB) ([]ContestView, error) {
@@ -178,7 +176,6 @@ func getParticipatingContests(userEmail string, db *sql.DB) ([]ContestView, erro
 
 func getCreatedContests(userEmail string, db *sql.DB) ([]ContestView, error) {
 	rows, err := db.Query("SELECT contest_id, contest_title, contest_description, contest_start_time, contest_end_time FROM contest WHERE creator_email = ?", userEmail)
-	fmt.Println("ROWS:", rows)
 	if err != nil {
 		fmt.Println("Error fetching created contests:", err)
 		return nil, err
@@ -198,7 +195,7 @@ func parseContests(rows *sql.Rows) ([]ContestView, error) {
 			return nil, err
 		}
 
-		fmt.Println(&contest.ContestID, &contest.ContestTitle, &contest.ContestDesc, &contest.StartTime, &contest.EndTime)
+		// fmt.Println(&contest.ContestID, &contest.ContestTitle, &contest.ContestDesc, &contest.StartTime, &contest.EndTime)
 		contests = append(contests, contest)
 	}
 

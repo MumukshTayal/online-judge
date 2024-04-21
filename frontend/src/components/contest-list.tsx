@@ -8,7 +8,8 @@ import Navbar from "./navbar.tsx"
 
 export default function ContestList() {
   const navigate = useNavigate();
-  const [contests, setContests] = useState([]);
+  const [participatingContests, setParticipatingContests] = useState([]);
+  const [createdContests, setCreatedContests] = useState([]);
 
   useEffect(() => {
     fetchContests();
@@ -18,7 +19,7 @@ export default function ContestList() {
     try {
       const jwtToken = localStorage.getItem('jwtToken');
   
-      const response = await fetch("http://localhost:8080/api/get_all_contests", {
+      const response = await fetch("http://localhost:8080/api/get_contest_list", {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${jwtToken}`,
@@ -31,7 +32,8 @@ export default function ContestList() {
       }
   
       const data = await response.json();
-      setContests(data);
+      setParticipatingContests(data.participating_contests);
+      setCreatedContests(data.created_contests);
     } catch (error) {
       console.error(error);
     }
@@ -45,13 +47,10 @@ export default function ContestList() {
   return (
     <div className="flex flex-col h-screen">
       <Navbar />
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-hidden">
         <section className="container py-6 space-y-6 text-gray-900 md:space-y-8 dark:text-gray-50">
           <div className="space-y-2">
             <h1 className="text-3xl font-semibold tracking-tighter sm:text-4xl md:text-5xl">Contests</h1>
-            <p className="max-w-prose text-gray-500 md:text-base/relaxed dark:text-gray-400">
-              Participate in the latest contests and improve your skills.
-            </p>
             <br></br>
             <p className="max-w text-gray-500 md:text-base/relaxed dark:text-gray-400">
             Expand our contest collection by adding new challenges. Contribute to our platform's growth and provide engaging competitions for participants.
@@ -63,10 +62,14 @@ export default function ContestList() {
             </Link>
           </div>
           
+          {/* Display participating contests */}
           <div className="grid grid-cols-1 gap-6">
-            {/* Display fetched contests */}
-            {contests && contests.length > 0 ? ( 
-              contests.map(contest => (
+            <h2 className="text-2xl font-semibold">Participate</h2>
+            <p className="max-w-prose text-gray-500 md:text-base/relaxed dark:text-gray-400">
+              These are your available contests. Participate and improve your skills.
+            </p>
+            {participatingContests && participatingContests.length > 0 ? ( 
+              participatingContests.map(contest => (
                 <Card key={contest.contest_id} onClick={() => handleContestClick(contest)} className="cursor-pointer">
                   <CardContent className="p-4 md:p-6">
                     <div className="space-y-2">
@@ -86,7 +89,35 @@ export default function ContestList() {
                 </Card>
               ))
             ) : (
-              <p>No contests available.</p>
+              <p>No participating contests available.</p>
+            )}
+          </div>
+          
+          {/* Display created contests */}
+          <div className="grid grid-cols-1 gap-6">
+            <h2 className="text-2xl font-semibold">Created Contests</h2>
+            {createdContests && createdContests.length > 0 ? ( 
+              createdContests.map(contest => (
+                <Card key={contest.contest_id} onClick={() => handleContestClick(contest)} className="cursor-pointer">
+                  <CardContent className="p-4 md:p-6">
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-semibold">{contest.contest_title}</h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{contest.contest_description}</p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{contest.is_public}</p>
+                      <div className="flex items-center space-x-2 text-sm">
+                        <ClockIcon className="w-4 h-4 text-gray-500" />
+                        <time dateTime={contest.start_time}>{new Date(contest.start_time).toLocaleString()}</time>
+                      </div>
+                      <div className="flex items-center space-x-2 text-sm">
+                        <ClockIcon className="w-4 h-4" />
+                        <time dateTime={contest.end_time}>{new Date(contest.end_time).toLocaleString()}</time>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <p>No created contests available.</p>
             )}
           </div>
         </section>

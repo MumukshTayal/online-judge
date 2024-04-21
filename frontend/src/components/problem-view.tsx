@@ -8,7 +8,7 @@ export default function ProblemView() {
   const { problemId } = useParams();
   const [problem, setProblem] = useState(null);
   const [code, setCode] = useState("");
-  const [language, setLanguage] = useState('');
+  const [language, setLanguage] = useState('py');
   const [jwtToken, setJwtToken] = useState('');
   const codeTextareaRef = useRef(null);
   const [result, setResult] = useState("");
@@ -162,7 +162,7 @@ export default function ProblemView() {
         <div>
           <h2 className="text-2xl font-bold">Select Language</h2>
           <select onChange={(e) => setLanguage(e.target.value)}>
-            <option value="python">Python</option>
+            <option value="py">Python</option>
             <option value="cpp">C++</option>
             <option value="c">C</option>
           </select>
