@@ -1,17 +1,18 @@
-# Use an appropriate base image for Java
-FROM openjdk:11-jdk-slim
-
-# Set the working directory
+# Stage 1: Install Python
+FROM alpine:latest as python-stage
 WORKDIR /app
-
-RUN apt-get install python3
-
-# Copy the source code
-COPY javacode.java .
+RUN apk add --no-cache python3
 COPY test_cases.py .
 
-# Compile the Java code
+# Stage 2: Build Java application
+FROM openjdk:11-jdk-slim
+WORKDIR /app
+RUN apt-get update && apt-get install -y python3
+COPY javacode.java .
 RUN javac javacode.java
 
-# Set the entry point to run the compiled Java program
-CMD ["java", "javacode"]
+# Copy Python files from previous stage
+COPY --from=python-stage /app/test_cases.py .
+
+# Set the entry point to run the Python script
+CMD ["python3", "test_cases.py"]

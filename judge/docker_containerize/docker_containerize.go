@@ -51,10 +51,12 @@ func Containerize(c *fiber.Ctx) (string, error) {
 		buildContextDir = "./docker_containerize/Dockerfile.python"
 	case "cpp":
 		buildContextDir = "./docker_containerize/Dockerfile.cplpl"
+	case "c":
+		buildContextDir = "./docker_containerize/Dockerfile.cplpl"
 	case "java":
 		buildContextDir = "./docker_containerize/Dockerfile.jv"
 	default:
-		return "", errors.New("unsupported language")
+		return "", errors.New("unsupported language here")
 	}
 	// codeFilePath := "./docker_containerize/code.py"            // Replace with the path to the code file
 	testCasesFilePath := "./docker_containerize/test_cases.py" // Replace with the path to the test cases file
@@ -174,7 +176,7 @@ func createTarArchive(dockerfilePath string, codeContent string, testCasesFilePa
 	var filename string
 	if language == "py" {
 		filename = "pytcode.py"
-	} else if language == "cpp" {
+	} else if language == "cpp" || language == "c" {
 		filename = "ccode.txt"
 	} else if language == "java" {
 		filename = "javacode.java"
