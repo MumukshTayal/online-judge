@@ -1,0 +1,26 @@
+FROM alpine:3.17
+
+# Install GCC and Python
+RUN apk update
+RUN apk add g++
+RUN apk add python3
+
+# Set the working directory
+WORKDIR /app
+
+ARG LANG
+ENV LANG="py"
+
+# Copy the code file into the container
+# COPY ccode.txt .
+COPY input.txt .
+COPY output.txt .
+COPY test_cases.py .
+COPY pytcode.py .
+
+# Command to execute when the container starts
+# CMD ["python3", "ls.py"]
+# CMD ["ash", "-c", "cat code.txt > code.cpp"]
+# CMD ["python3","ls.py"]
+CMD ["python3", "test_cases.py"]
+# CMD ["g++", "code.cpp", "-o", "code"]

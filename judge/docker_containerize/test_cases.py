@@ -1,72 +1,113 @@
+# import subprocess
 # import time
-# import importlib
-# import sys
-# import os
-
-# test_cases = [
-#     {
-#         "input": [range(1,100)],
-#         "expected_output": 5050
-#     },
-#     {
-#         "input": [[4, 5, 6]],
-#         "expected_output": 15
-#     },
-#     # Add more test cases as needed
-# ]
 
 
-# def run_test_cases():
-#     # Get the function name from the environment variable
-#     function_name = os.environ.get('FUNCTION_NAME') or 'add'
-#     # function_name = "add"
-#     if not function_name:
-#         print("FUNCTION_NAME environment variable not set.")
-#         return False
+# def main():
+#     with open("input.txt", "r") as file:
+#         input_data = file.read()
+
+#     try:
+#         start_time = time.time()
+#         output = subprocess.run(
+#             ["python", "code.py"],
+#             input=input_data,
+#             text=True,
+#             capture_output=True,
+#             check=True,
+#         )
+#         total_time = time.time() - start_time
+#     except subprocess.CalledProcessError as e:
+#         print("An error occurred while executing your code:")
+#         print(e.stderr)
+#         return
     
-#     # Import the user's code module
-#     user_code = importlib.import_module('code')
+#     with open("output.txt", "r") as file:
+#         output_data = file.read()
 
-#     # Get the function from the user's code
-#     user_function = getattr(user_code, function_name)
+#     list_output_data = output_data.split("\n")
+#     count = 0
+#     actual_output = output.stdout.split("\n")
+#     for i in range(len(list_output_data)):
+#         if i >= len(actual_output):
+#             break
+#         count += 1
+#         if list_output_data[i] != actual_output[i]:
+#             count -= 1
 
-#     # Call the user's function with the test case inputs
-#     start_time = time.time()
-#     for i, test_case in enumerate(test_cases):
-#         user_output = user_function(*test_case["input"])
-#         if user_output != test_case["expected_output"]:
-#             print(f"{i}/{len(test_cases)} test case(s) passed! Test case failed: Input={test_case['input']} Expected output={test_case['expected_output']} Actual output={user_output}, Time Elapsed: {time.time() - start_time} seconds")
-#             return False
-        
-#     print(f"{len(test_cases)}/{len(test_cases)} test cases passed! Time Elapsed: {time.time() - start_time} seconds")
-#     return True
+#     print(f"{count}/{len(list_output_data)} test cases Passed :)")
+#     print(f"Time Elapsed: {int(total_time*1000)} msec")
 
 # if __name__ == "__main__":
-#     if len(sys.argv) < 1:
-#         print("Usage: python test_cases.py <user_code_file> <function_name>")
-#         sys.exit(1)
-
-#     # function_name = sys.argv[1]
-#     run_test_cases()
+#     main()
 
 import subprocess
 import time
-
+import os
+import stat
 
 def main():
+    print("Inside the main function")
     with open("input.txt", "r") as file:
         input_data = file.read()
 
+    language = os.environ.get("LANG")
+    print("language: ", language)
     try:
-        start_time = time.time()
-        output = subprocess.run(
-            ["python", "code.py"],
-            input=input_data,
-            text=True,
-            capture_output=True,
-            check=True,
-        )
-        total_time = time.time() - start_time
+        print(language)
+        if language == "py":
+            start_time = time.time()
+            output = subprocess.run(
+                ["python", "pytcode.py"],
+                input=input_data,
+                text=True,
+                capture_output=True,
+                check=True,
+            )
+            total_time = time.time() - start_time
+        elif language == "cpp":
+            # return
+            with open("ccode.txt", "r") as file:
+                code_data = file.read()
+            # print("Code Data: ", code_data)
+            # return
+            # Create code.cpp file and copy code.txt contents to it
+            with open("code.cpp", "w") as file:
+                if not os.path.exists("code.cpp"):
+                    print("code.cpp file does not exist")
+                    return
+
+                file.write(code_data)
+            # return
+
+
+            # Compile the C++ code
+            # return
+
+            # os.chmod("code.cpp", stat.S_IRUSR | stat.S_IWUSR)
+            compile_output = subprocess.run(
+                ["g++", "-o", "code", "code.cpp"],
+                capture_output=True,
+                check=True,
+            )
+            
+            if compile_output.returncode != 0:
+                print("An error occurred while compiling your code:")
+                print(compile_output.stderr)
+                return
+            # Run the compiled C++ code
+            start_time = time.time()
+            output = subprocess.run(
+                ["./code"],
+                input=input_data,
+                text=True,
+                capture_output=True,
+                check=True,
+            )
+            total_time = time.time() - start_time
+        else:
+            print("Unsupported language")
+            return
+        
     except subprocess.CalledProcessError as e:
         print("An error occurred while executing your code:")
         print(e.stderr)
@@ -76,9 +117,6 @@ def main():
         output_data = file.read()
 
     list_output_data = output_data.split("\n")
-    # print(list_output_data)
-    # list_output_data = list_output_data.split(' ')
-    # print(output.stdout)
     count = 0
     actual_output = output.stdout.split("\n")
     for i in range(len(list_output_data)):
@@ -86,13 +124,13 @@ def main():
             break
         count += 1
         if list_output_data[i] != actual_output[i]:
-            # print(f"{i}/{len(list_output_data)} test cases Passed") 
-            # print(f"Expected: {list_output_data[i]}")
-            # print(f"Actual: {actual_output[i]}")
             count -= 1
-
-    print(f"{count}/{len(list_output_data)} test cases Passed :)")
-    print(f"Time Elapsed: {int(total_time*1000)} msec")
+    if count == len(list_output_data):
+        print(f"{count}/{len(list_output_data)} test cases Passed :)")
+    else:
+        print(f"{count}/{len(list_output_data)} test cases Passed :(")
+    
+    print(f"Time Elapsed: {total_time*1000:.2f} msec")
 
 if __name__ == "__main__":
     main()

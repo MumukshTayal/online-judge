@@ -1,0 +1,17 @@
+# Use an appropriate base image for Java
+FROM openjdk:11-jdk-slim
+
+# Set the working directory
+WORKDIR /app
+
+RUN apt-get install python3
+
+# Copy the source code
+COPY javacode.java .
+COPY test_cases.py .
+
+# Compile the Java code
+RUN javac javacode.java
+
+# Set the entry point to run the compiled Java program
+CMD ["java", "javacode"]

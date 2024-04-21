@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -19,10 +20,11 @@ type SubmittedCode struct {
 	Code        string `json:"test_code"`
 	TestsInput  string `json:"test_input"`
 	TestsOutput string `json:"test_output"`
+	Language    string `json:"language"`
 }
 
 func Containerize(c *fiber.Ctx) (string, error) {
-	fmt.Println("INSIDE OOOOOO!!!!!!")
+	// fmt.Println("INSIDE OOOOOO!!!!!!")
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
@@ -36,23 +38,36 @@ func Containerize(c *fiber.Ctx) (string, error) {
 		return "", err
 	}
 
-	fmt.Println("CODE:", submittedCode.Code)
-	fmt.Println("TESTS INPUT:", submittedCode.TestsInput)
-	fmt.Println("TESTS OUTPUT:", submittedCode.TestsOutput)
+	// fmt.Println("CODE:", submittedCode.Code)
+	// fmt.Println("TESTS INPUT:", submittedCode.TestsInput)
+	// fmt.Println("TESTS OUTPUT:", submittedCode.TestsOutput)
+	// fmt.Println("LANGUAGE:", submittedCode.Language)
 
 	// Create a tar archive from the build context directory
-	buildContextDir := "./docker_containerize/Dockerfile.unknown" // Replace with the path to the directory containing your Dockerfile
+
+	var buildContextDir string
+	switch submittedCode.Language {
+	case "py":
+		buildContextDir = "./docker_containerize/Dockerfile.python"
+	case "cpp":
+		buildContextDir = "./docker_containerize/Dockerfile.cplpl"
+	case "java":
+		buildContextDir = "./docker_containerize/Dockerfile.jv"
+	default:
+		return "", errors.New("unsupported language")
+	}
 	// codeFilePath := "./docker_containerize/code.py"            // Replace with the path to the code file
 	testCasesFilePath := "./docker_containerize/test_cases.py" // Replace with the path to the test cases file
-	buildContextTarReader, err := createTarArchive(buildContextDir, submittedCode.Code, testCasesFilePath, submittedCode.TestsInput, submittedCode.TestsOutput)
+	language := submittedCode.Language                         // Add a Language field to the SubmittedCode struct
+	buildContextTarReader, err := createTarArchive(buildContextDir, submittedCode.Code, testCasesFilePath, submittedCode.TestsInput, submittedCode.TestsOutput, submittedCode.Language)
 	if err != nil {
 		return "", err
 	}
 
 	imageName := "python_execute:v1"
-	functionName := "add" // Replace with the name of the function to execute (To be fetched from the database or the request body)
+	// functionName := "add" // Replace with the name of the function to execute (To be fetched from the database or the request body)
 	buildArgs := map[string]*string{
-		"FUNCTION_NAME": &functionName, // Use the FUNCTION_NAME environment variable
+		"LANG": &language, // Use the FUNCTION_NAME environment variable
 	}
 
 	// Build the Docker image from the Dockerfile
@@ -71,12 +86,15 @@ func Containerize(c *fiber.Ctx) (string, error) {
 	// Create a new container
 	config := &container.Config{
 		Image: imageName, // Replace with the name of the built image
+		// Env: []string{
+		// 	"LANGUAGE=" + language, // Set the LANGUAGE environment variable
+		// },
 	}
 	containerResponse, err := cli.ContainerCreate(ctx, config, nil, nil, nil, "")
 	if err != nil {
 		return "", err
 	}
-
+	// fmt.Println(containerResponse)
 	// Start the container
 	err = cli.ContainerStart(ctx, containerResponse.ID, container.StartOptions{})
 	if err != nil {
@@ -125,7 +143,7 @@ func Containerize(c *fiber.Ctx) (string, error) {
 	return logBuffer.String(), nil
 }
 
-func createTarArchive(dockerfilePath string, codeContent string, testCasesFilePath string, testcasesInput string, testcasesOutput string) (io.Reader, error) {
+func createTarArchive(dockerfilePath string, codeContent string, testCasesFilePath string, testcasesInput string, testcasesOutput string, language string) (io.Reader, error) {
 	var buf bytes.Buffer
 	tw := tar.NewWriter(&buf)
 	defer tw.Close()
@@ -152,8 +170,20 @@ func createTarArchive(dockerfilePath string, codeContent string, testCasesFilePa
 	// if err != nil {
 	// 	return nil, err
 	// }
+	// Create a file for the code
+	var filename string
+	if language == "py" {
+		filename = "pytcode.py"
+	} else if language == "cpp" {
+		filename = "ccode.txt"
+	} else if language == "java" {
+		filename = "javacode.java"
+	} else {
+		return nil, errors.New("unsupported language")
+	}
+
 	codeFileHeader := &tar.Header{
-		Name: "code.py",
+		Name: filename,
 		Size: int64(len(codeContent)),
 		Mode: 0644,
 	}

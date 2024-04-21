@@ -1,0 +1,27 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+
+int main() {
+    int t;
+    std::cin >> t;
+    for (int i = 0; i < t; i++) {
+        int n, target;
+        std::cin >> n >> target;
+        std::vector<int> arr(n);
+        for (int j = 0; j < n; j++) {
+            std::cin >> arr[j];
+        }
+        std::unordered_map<int, int> hist;
+        for (int j = 0; j < n; j++) {
+            int complement = target - arr[j];
+            if (hist.find(complement) != hist.end()) {
+                std::cout << hist[complement] << " " << j << std::endl;
+                break;
+            } else {
+                hist[arr[j]] = j;
+            }
+        }
+    }
+    return 0;
+}
