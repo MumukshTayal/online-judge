@@ -22,7 +22,7 @@ type Contest struct {
 	ContestDesc  string    `json:"contest_description"`
 	StartTime    time.Time `json:"start_time"`
 	EndTime      time.Time `json:"end_time"`
-	IsPublic     bool      `json:"is_public"`
+	IsPublic     string    `json:"is_public"`
 	CreatorEmail string    `json:"creator_email"`
 }
 
@@ -85,18 +85,15 @@ func GetContestDetails(c *fiber.Ctx) error {
 func fetchContest(db *sql.DB, contestID string) (Contest, error) {
 	var contest Contest
 
-	row := db.QueryRow("SELECT contest_id, contest_title, contest_description, contest_start_time, contest_end_time, COALESCE(is_public, 0), creator_email FROM contest WHERE contest_id = ?", contestID)
+	row := db.QueryRow("SELECT contest_id, contest_title, contest_description, contest_start_time, contest_end_time, is_public, creator_email FROM contest WHERE contest_id = ?", contestID)
 
-	var isPublicInt int
 	var creatorEmail sql.NullString // Use sql.NullString for handling NULL values
 
-	err := row.Scan(&contest.ContestID, &contest.ContestTitle, &contest.ContestDesc, &contest.StartTime, &contest.EndTime, &isPublicInt, &creatorEmail)
+	err := row.Scan(&contest.ContestID, &contest.ContestTitle, &contest.ContestDesc, &contest.StartTime, &contest.EndTime, &contest.IsPublic, &creatorEmail)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "failed to scan contest row: %v\n", err)
 		return contest, err
 	}
-
-	contest.IsPublic = isPublicInt != 0
 
 	// Check if the creator_email value is valid before assigning it to contest.CreatorEmail
 	if creatorEmail.Valid {
