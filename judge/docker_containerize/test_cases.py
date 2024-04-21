@@ -43,7 +43,6 @@
 import subprocess
 import time
 import os
-import stat
 
 def main():
     print("Inside the main function")
@@ -64,12 +63,11 @@ def main():
                 check=True,
             )
             total_time = time.time() - start_time
-        elif language == "cpp":
+        elif language == "cpp" or language == "c":
             # return
             with open("ccode.txt", "r") as file:
                 code_data = file.read()
-            # print("Code Data: ", code_data)
-            # return
+
             # Create code.cpp file and copy code.txt contents to it
             with open("code.cpp", "w") as file:
                 if not os.path.exists("code.cpp"):
@@ -77,13 +75,7 @@ def main():
                     return
 
                 file.write(code_data)
-            # return
 
-
-            # Compile the C++ code
-            # return
-
-            # os.chmod("code.cpp", stat.S_IRUSR | stat.S_IWUSR)
             compile_output = subprocess.run(
                 ["g++", "-o", "code", "code.cpp"],
                 capture_output=True,
@@ -104,6 +96,29 @@ def main():
                 check=True,
             )
             total_time = time.time() - start_time
+        elif language == "java":
+            print("Hello Java")
+            return            
+            compile_output = subprocess.run(
+                ["javac", "code.java"],
+                capture_output=True,
+                check=True,
+            )
+            if compile_output.returncode != 0:
+                print("An error occurred while compiling your code:")
+                print(compile_output.stderr)
+                return
+            
+            start_time = time.time()
+            output = subprocess.run(
+                ["java", "javacode"],
+                input=input_data,
+                text=True,
+                capture_output=True,
+                check=True,
+            )
+            total_time = time.time() - start_time
+            print(output)
         else:
             print("Unsupported language")
             return
@@ -113,6 +128,7 @@ def main():
         print(e.stderr)
         return
     
+    return
     with open("output.txt", "r") as file:
         output_data = file.read()
 
