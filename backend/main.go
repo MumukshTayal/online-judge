@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"strings"
+	"time"
 
 	"database/sql"
 	"strconv"
@@ -18,7 +19,6 @@ import (
 
 	"github.com/MumukshTayal/online-judge/add_contest"
 	"github.com/MumukshTayal/online-judge/add_problem"
-	"github.com/MumukshTayal/online-judge/add_submission"
 	"github.com/MumukshTayal/online-judge/add_testcase"
 	"github.com/MumukshTayal/online-judge/edit_userProfile"
 	"github.com/MumukshTayal/online-judge/fetch_userProfile"
@@ -46,11 +46,12 @@ type TestJob struct {
 }
 
 type Runny struct {
-	ProblemID string `json:"problem_id"`
-	ContestID string `json:"contest_id"`
-	UserEmail string `json:"user_email"`
-	Code      string `json:"code"`
-	Language  string `json:"language"`
+	ProblemID      string    `json:"problem_id"`
+	ContestID      string    `json:"contest_id"`
+	UserEmail      string    `json:"user_email"`
+	Code           string    `json:"code"`
+	Language       string    `json:"language"`
+	SubmissionTime time.Time `json:"submission_date_time"`
 }
 
 type Testcase struct {
@@ -222,12 +223,6 @@ func main() {
 		if err != nil {
 			return err
 		}
-		// showTestcases(db)
-		// fmt.Println("User Email:", userEmail)
-		// fmt.Println("KI KI KI RRR IN:")
-		// fmt.Println(input)
-		// fmt.Println("KI KI KI RRR OUT:")
-		// fmt.Println(output)
 
 		sendToJudge := PrepareForJuding{
 			TestInpt:   input,
@@ -237,13 +232,10 @@ func main() {
 			MemLimit:   mem_limit,
 			Language:   lang,
 		}
-		// fmt.Println("DAAAAAAAATA:", sendToJudge)
 		data, err := json.Marshal(sendToJudge)
 		if err != nil {
 			return c.SendStatus(fiber.StatusInternalServerError)
 		}
-
-		// fmt.Println("DATAAAAAAAAAAAAA:", data)
 
 		judgeURL := "http://127.0.0.1:3001/judge/add_to_queue"
 		resp, err := http.Post(judgeURL, "application/json", bytes.NewReader(data))
@@ -257,15 +249,149 @@ func main() {
 			return c.SendStatus(http.StatusInternalServerError)
 		}
 		respBody, err := io.ReadAll(resp.Body)
-		fmt.Println(string(respBody))
+		// fmt.Println(string(respBody))
 		return c.SendString(string(respBody))
-		// return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		// 	"message": "Code Ran Successfully!",
-		// })
+	})
+
+	app.Post("/api/submit", func(c *fiber.Ctx) error {
+		fmt.Println("INSIDE ADD TO QUEUE!!!!")
+		authHeader := c.Get("Authorization")
+		tokenStr := ""
+		if authHeader != "" {
+			authValue := strings.Split(authHeader, " ")
+			if len(authValue) == 2 && authValue[0] == "Bearer" {
+				tokenStr = authValue[1]
+			}
+		}
+
+		token, err := jwt.Parse(tokenStr, nil)
+		if token == nil {
+			fmt.Println("Error parsing token:", err)
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+				"message": "Unauthorized",
+			})
+		}
+		claims, _ := token.Claims.(jwt.MapClaims)
+		userEmail, ok := claims["email"].(string)
+		fmt.Println("USER_EMAIL:", userEmail)
+		if !ok {
+			fmt.Println("Invalid token claims")
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"message": "Invalid token claims",
+			})
+		}
+
+		var runny Runny
+		if err := c.BodyParser(&runny); err != nil {
+			return err
+		}
+
+		problemID := runny.ProblemID
+		contestId := runny.ContestID
+		lang := runny.Language
+		fmt.Println("Contest:", contestId, "Problem:", problemID)
+		err2 := godotenv.Load(".env")
+		if err2 != nil {
+			log.Fatalf("Some error occurred. Err: %s", err2)
+		}
+
+		dbName := os.Getenv("DATABASE_NAME")
+		dbToken := os.Getenv("DATABASE_TOKEN")
+
+		url := fmt.Sprintf("libsql://%s.turso.io?authToken=%s", dbName, dbToken)
+
+		db, err := sql.Open("libsql", url)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "failed to open db %s: %s", url, err)
+			return err
+		}
+		defer db.Close()
+		input, output, err := fetchTestcases(db, problemID)
+		if err != nil {
+			return err
+		}
+
+		time_limit, mem_limit, err := fetchConstraints(db, contestId)
+		if err != nil {
+			return err
+		}
+		sendToJudge := PrepareForJuding{
+			TestInpt:   input,
+			TestOutput: output,
+			TestCode:   runny.Code,
+			TimeLimit:  time_limit,
+			MemLimit:   mem_limit,
+			Language:   lang,
+		}
+		data, err := json.Marshal(sendToJudge)
+		if err != nil {
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+
+		judgeURL := "http://127.0.0.1:3001/judge/add_to_queue"
+		resp, err := http.Post(judgeURL, "application/json", bytes.NewReader(data))
+		if err != nil {
+			return c.SendStatus(fiber.StatusInternalServerError)
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != http.StatusOK {
+			log.Printf("Received non-OK response status code: %d", resp.StatusCode)
+			return c.SendStatus(http.StatusInternalServerError)
+		}
+		respBody, err := io.ReadAll(resp.Body)
+		respString := string(respBody)
+		lines := strings.Split(respString, "\n")
+		var totalTestcases, testCasesPassed int
+		var timeElapsed float64
+		for _, line := range lines {
+			fields := strings.Split(line, ":")
+			if len(fields) != 2 {
+				continue
+			}
+			fieldName := strings.TrimSpace(fields[0])
+			fieldValue := strings.TrimSpace(fields[1])
+
+			switch fieldName {
+			case "Total Testcases":
+				totalTestcases, _ = strconv.Atoi(fieldValue)
+			case "Test Cases Passed":
+				testCasesPassed, _ = strconv.Atoi(fieldValue)
+			case "Time Elapsed (msec)":
+				timeElapsed, _ = strconv.ParseFloat(fieldValue, 64)
+			}
+		}
+
+		var result string
+		if testCasesPassed == totalTestcases {
+			result = "AC"
+		} else if testCasesPassed < totalTestcases {
+			result = "WA"
+		}
+
+		if timeElapsed > float64(time_limit) {
+			result = "TLE"
+		}
+
+		fmt.Println("Result:", result)
+
+		stmt, err := db.Prepare("INSERT INTO submission (problem_id, user_email, code, language, result, execution_time, memory_used, submission_date_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+		if err != nil {
+			return err
+		}
+		defer stmt.Close()
+		_, err = stmt.Exec(runny.ProblemID, userEmail, runny.Code, runny.Language, result, timeElapsed, mem_limit, runny.SubmissionTime)
+
+		// fmt.Println("YOOOO", runny.ProblemID, userEmail, runny.Code, runny.Language, result, timeElapsed, mem_limit, runny.SubmissionTime)
+		if err != nil {
+			return err
+		}
+
+		return c.SendString("Submission Added Successfully")
 	})
 
 	//app.Post("/api/run_code", run_code.RunCode)
-	app.Post("/api/submit", add_submission.AddSubmission)
+	// app.Post("/api/submit", add_submission.AddSubmission)
 	app.Post("/api/create_contest", add_contest.AddContest)
 	app.Post("/api/create_problem", add_problem.AddProblem)
 	app.Post("/edit_profile", edit_userProfile.EditUserProfile)

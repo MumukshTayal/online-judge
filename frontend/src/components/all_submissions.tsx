@@ -23,21 +23,19 @@ export default function AllSubmissionsPage() {
       <table style={{ width: '100%', borderCollapse: 'collapse', padding: '32 px'}}>
         <thead>
           <tr style={{ backgroundColor: '#f5f5f5' }}>
-            <th style={{ padding: '8px', border: '1px solid #ddd' }}>Submission ID</th>
+          <th style={{ padding: '8px', border: '1px solid #ddd' }}>User</th>
             <th style={{ padding: '8px', border: '1px solid #ddd' }}>Verdict</th>
             <th style={{ padding: '8px', border: '1px solid #ddd' }}>Time</th>
             <th style={{ padding: '8px', border: '1px solid #ddd' }}>Language</th>
-            <th style={{ padding: '8px', border: '1px solid #ddd' }}>User</th>
           </tr>
         </thead>
         <tbody>
           {submissions.map((submission, index) => (
             <tr key={index}>
-              <td style={{ padding: '8px', border: '1px solid #ddd' }}>#{submission.UserID + submission.ProblemID}</td>
+            <td style={{ padding: '8px', border: '1px solid #ddd' }}>{submission.UserID}</td>
               <td style={{ padding: '8px', border: '1px solid #ddd' }}>{submission.Result}</td>
               <td style={{ padding: '8px', border: '1px solid #ddd' }}>{submission.Time}</td>
               <td style={{ padding: '8px', border: '1px solid #ddd' }}>{submission.Language}</td>
-              <td style={{ padding: '8px', border: '1px solid #ddd' }}>{submission.UserID}</td>
             </tr>
           ))}
         </tbody>

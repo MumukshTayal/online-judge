@@ -78,6 +78,7 @@ export default function ProblemView() {
     //   return;
 
     const requestBody = {
+      contest_id: contestId,
       problem_id: problemId,
       code: codeTextareaRef.current.value,
       language: language,
@@ -178,7 +179,8 @@ export default function ProblemView() {
       </div>
       <div>
           <h2 className="text-2xl font-bold">Result</h2>
-          <p className="text-gray-500 dark:text-gray-400">{result}</p>
+        {/* <p className="text-gray-500 dark:text-gray-400">{result}</p> */}
+        <div dangerouslySetInnerHTML={{ __html: result.replace(/\n/g, '<br>') }} />
         </div>
     </div>
   )

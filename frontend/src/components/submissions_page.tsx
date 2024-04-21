@@ -23,7 +23,8 @@ export default function SubmissionsPage() {
   return (
     <div>
       <Navbar />
-      <div className="flex justify-center min-h-screen bg-gray-100 dark:bg-gray-800">
+      <b className="text-3xl font-semibold tracking-tighter sm:text-4xl md:text-5xl">Submissions for Contest {contestId}</b>
+      <div className="flex justify-center min-h-screen bg-gray-100 dark:bg-gray-800 mt-4">
         <div className="max-w-3xl w-full p-4">
           <Card className="h-full">
             <CardHeader>
@@ -35,22 +36,21 @@ export default function SubmissionsPage() {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-[120px]">Submission ID</TableHead>
+                        {/* <TableHead className="w-[120px]">Submission ID</TableHead> */}
+                        <TableHead>User</TableHead>
                         <TableHead>Verdict</TableHead>
                         <TableHead>Time</TableHead>
                         <TableHead>Language</TableHead>
-                        <TableHead>User</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {/* Map through submissions and display each submission */}
                       {submissions.map((submission, index) => (
                         <TableRow key={index}>
-                          <TableCell className="font-medium">#{submission.UserID + submission.ProblemID}</TableCell>
+                          <TableCell>{submission.UserID}</TableCell>
                           <TableCell>{submission.Result}</TableCell>
                           <TableCell>{submission.Time}</TableCell>
                           <TableCell>{submission.Language}</TableCell>
-                          <TableCell>{submission.UserID}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>

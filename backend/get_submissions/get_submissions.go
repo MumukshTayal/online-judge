@@ -18,6 +18,7 @@ type Submission struct {
 	ProblemID int
 	Result    string
 	Time      time.Time
+	Language  string
 }
 
 func GetSubmissions(c *fiber.Ctx) error {
@@ -75,7 +76,7 @@ func fetchSubmissions(db *sql.DB, userEmails []string, problemIDs []int) (map[st
 
 	for _, userEmail := range userEmails {
 		for _, problemID := range problemIDs {
-			rows, err := db.Query("SELECT result, submission_date_time FROM submission WHERE user_email = ? AND problem_id = ?", userEmail, problemID)
+			rows, err := db.Query("SELECT result, submission_date_time, language FROM submission WHERE user_email = ? AND problem_id = ?", userEmail, problemID)
 			if err != nil {
 				return nil, err
 			}
@@ -85,7 +86,8 @@ func fetchSubmissions(db *sql.DB, userEmails []string, problemIDs []int) (map[st
 			for rows.Next() {
 				var result string
 				var submissionTime time.Time
-				if err := rows.Scan(&result, &submissionTime); err != nil {
+				var lang string
+				if err := rows.Scan(&result, &submissionTime, &lang); err != nil {
 					return nil, err
 				}
 				submissions[userEmail] = append(submissions[userEmail], Submission{
@@ -93,6 +95,7 @@ func fetchSubmissions(db *sql.DB, userEmails []string, problemIDs []int) (map[st
 					ProblemID: problemID,
 					Result:    result,
 					Time:      submissionTime,
+					Language:  lang,
 				})
 			}
 			if err := rows.Err(); err != nil {
@@ -189,7 +192,7 @@ func GetAllSubmissions(c *fiber.Ctx) error {
 
 func fetchAllSubmissions(db *sql.DB) ([]Submission, error) {
 	var submissions []Submission
-	rows, err := db.Query("SELECT problem_id, user_email, result, submission_date_time FROM submission")
+	rows, err := db.Query("SELECT problem_id, user_email, result, submission_date_time, language FROM submission")
 	if err != nil {
 		return nil, err
 	}
@@ -201,7 +204,8 @@ func fetchAllSubmissions(db *sql.DB) ([]Submission, error) {
 		var submissionTime time.Time
 		var problemId int
 		var userEmail string
-		if err := rows.Scan(&problemId, &userEmail, &result, &submissionTime); err != nil {
+		var lang string
+		if err := rows.Scan(&problemId, &userEmail, &result, &submissionTime, &lang); err != nil {
 			return nil, err
 		}
 		submissions = append(submissions, Submission{
@@ -209,6 +213,7 @@ func fetchAllSubmissions(db *sql.DB) ([]Submission, error) {
 			ProblemID: problemId,
 			Result:    result,
 			Time:      submissionTime,
+			Language:  lang,
 		})
 	}
 	if err := rows.Err(); err != nil {

@@ -59,7 +59,7 @@ func main() {
 			fmt.Println("Error processing job:", result.Err)
 			return result.Err
 		}
-		fmt.Println("Output:", result.Output)
+		fmt.Println(result.Output)
 		// fmt.Println(result.Output)
 		c.SendString(result.Output)
 		return nil

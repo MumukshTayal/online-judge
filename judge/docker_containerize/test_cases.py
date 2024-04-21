@@ -45,14 +45,11 @@ import time
 import os
 
 def main():
-    print("Inside the main function")
     with open("input.txt", "r") as file:
         input_data = file.read()
 
     language = os.environ.get("LANG")
-    print("language: ", language)
     try:
-        print(language)
         if language == "py":
             start_time = time.time()
             output = subprocess.run(
@@ -128,7 +125,6 @@ def main():
         print(e.stderr)
         return
     
-    return
     with open("output.txt", "r") as file:
         output_data = file.read()
 
@@ -141,12 +137,9 @@ def main():
         count += 1
         if list_output_data[i] != actual_output[i]:
             count -= 1
-    if count == len(list_output_data):
-        print(f"{count}/{len(list_output_data)} test cases Passed :)")
-    else:
-        print(f"{count}/{len(list_output_data)} test cases Passed :(")
-    
-    print(f"Time Elapsed: {total_time*1000:.2f} msec")
+    print(f"Total Testcases:        {len(list_output_data)}")
+    print(f"Test Cases Passed:      {count}")
+    print(f"Time Elapsed (msec):    {total_time*1000:.2f}")
 
 if __name__ == "__main__":
     main()

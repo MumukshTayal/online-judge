@@ -105,11 +105,9 @@ func calculateUserScores(submissions map[string][]Submission) map[string]UserSco
 		maxSubmissionTime := time.Time{}
 
 		for _, submission := range userSubmissions {
-			score, err := strconv.Atoi(submission.Result)
-			if err != nil {
-				fmt.Println("Error calculating the score of the user.")
+			if submission.Result == "AC" {
+				totalScore += 10
 			}
-			totalScore += score
 
 			if submission.Time.After(maxSubmissionTime) {
 				maxSubmissionTime = submission.Time
@@ -135,7 +133,7 @@ func fetchSubmissions(db *sql.DB, userEmails []string, problemIDs []int) (map[st
 			if err != nil {
 				return nil, err
 			}
-			fmt.Println(rows)
+			// fmt.Println(rows)
 			defer rows.Close()
 
 			for rows.Next() {
