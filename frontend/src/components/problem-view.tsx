@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Textarea } from "@/components/ui/textarea";
-import { SelectValue, SelectTrigger, SelectItem, SelectContent, Select } from "@/components/ui/select";
 import Navbar from "./navbar.tsx"
 
 export default function ProblemView() {
@@ -9,7 +8,7 @@ export default function ProblemView() {
   const { problemId } = useParams();
   const [problem, setProblem] = useState(null);
   const [code, setCode] = useState("");
-  const [language, setLanguage] = useState("");
+  const [language, setLanguage] = useState('');
   const [jwtToken, setJwtToken] = useState('');
   const codeTextareaRef = useRef(null);
   const [result, setResult] = useState("");
@@ -112,12 +111,6 @@ export default function ProblemView() {
     return <div>Loading...</div>;
   }
 
-  const handleLanguageSelect = (event) => {
-    const selectedLanguage = event.target.value;
-    console.log("Selected language:", selectedLanguage);
-    setLanguage(selectedLanguage);
-  };
-
   return (
     <div className="w-full px-4 py-6 space-y-6 md:px-6">
       <Navbar />
@@ -166,17 +159,13 @@ export default function ProblemView() {
         </div>
         <div>
           <h2 className="text-2xl font-bold">Select Language</h2>
-          <Select>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select language" />
-            </SelectTrigger>
-            <SelectContent onChange={handleLanguageSelect}>
-              <SelectItem value="c">C</SelectItem>
-              <SelectItem value="python">Python</SelectItem>
-              <SelectItem value="java">Java</SelectItem>
-              <SelectItem value="cpp">C++</SelectItem>
-            </SelectContent>
-          </Select>
+          {/* Write code for dropdown which gives option of selecting Languages: Python, C++, C
+          Set this language as this going to be used for POST request */}
+          <select onChange={(e) => setLanguage(e.target.value)}>
+            <option value="python">Python</option>
+            <option value="cpp">C++</option>
+            <option value="c">C</option>
+          </select>
         </div>
       </div>
       <div className="flex justify-start space-x-4">
