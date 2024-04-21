@@ -82,6 +82,8 @@ def main():
     count = 0
     actual_output = output.stdout.split("\n")
     for i in range(len(list_output_data)):
+        if i >= len(actual_output):
+            break
         count += 1
         if list_output_data[i] != actual_output[i]:
             # print(f"{i}/{len(list_output_data)} test cases Passed") 
@@ -90,7 +92,7 @@ def main():
             count -= 1
 
     print(f"{count}/{len(list_output_data)} test cases Passed :)")
-    print(f"Time Elapsed: {total_time} seconds")
+    print(f"Time Elapsed: {int(total_time*1000)} msec")
 
 if __name__ == "__main__":
     main()
