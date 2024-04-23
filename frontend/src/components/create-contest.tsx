@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -18,6 +18,14 @@ export default function CreateContest() {
 
   const [newProblem, setNewProblem] = useState('');
   const [newEmail, setNewEmail] = useState('');
+  const [jwtToken, setJwtToken] = useState('');
+  
+  useEffect(() => {
+    const storedToken = localStorage.getItem('jwtToken');
+    if (storedToken) {
+      setJwtToken(storedToken);
+    }
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -94,6 +102,7 @@ export default function CreateContest() {
       const response = await fetch('http://localhost:8080/api/create_contest', {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${jwtToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),

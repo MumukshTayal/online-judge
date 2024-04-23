@@ -6,9 +6,11 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/joho/godotenv"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
 )
@@ -31,7 +33,32 @@ type LanguageLimit struct {
 }
 
 func AddContest(c *fiber.Ctx) error {
-	err := godotenv.Load(".env")
+	authHeader := c.Get("Authorization")
+	tokenStr := ""
+	if authHeader != "" {
+		authValue := strings.Split(authHeader, " ")
+		if len(authValue) == 2 && authValue[0] == "Bearer" {
+			tokenStr = authValue[1]
+		}
+	}
+
+	token, err := jwt.Parse(tokenStr, nil)
+	if token == nil {
+		fmt.Println("Error parsing token:", err)
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"message": "Unauthorized",
+		})
+	}
+	claims, _ := token.Claims.(jwt.MapClaims)
+	userEmail, ok := claims["email"].(string)
+	if !ok {
+		fmt.Println("Invalid token claims")
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "Invalid token claims",
+		})
+	}
+
+	err = godotenv.Load(".env")
 	if err != nil {
 		log.Fatalf("Some error occurred. Err: %s", err)
 	}
@@ -56,8 +83,14 @@ func AddContest(c *fiber.Ctx) error {
 		return err
 	}
 
+	// fmt.Println("EMAILS IN THE CONTEST:", contestData.Emails)
+
 	// Insert contest data into the contest table
-	if err := AddContestToTable(db, contestData); err != nil {
+	if err := AddContestToTable(db, contestData, userEmail); err != nil {
+		return err
+	}
+
+	if err := DistributeUserstoContest(db, contestData); err != nil {
 		return err
 	}
 
@@ -74,7 +107,7 @@ func AddContest(c *fiber.Ctx) error {
 	return c.SendString("Contest added successfully!")
 }
 
-func AddContestToTable(db *sql.DB, contestData ContestData) error {
+func AddContestToTable(db *sql.DB, contestData ContestData, userEmail string) error {
 	// Parse the start and end time strings into time.Time format
 	startTime, err := time.Parse("2006-01-02T15:04", contestData.StartTime)
 	if err != nil {
@@ -86,13 +119,14 @@ func AddContestToTable(db *sql.DB, contestData ContestData) error {
 		return err
 	}
 
-	stmt, err := db.Prepare("INSERT INTO contest (contest_title, contest_description, contest_start_time, contest_end_time) VALUES (?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO contest (contest_title, contest_description, contest_start_time, contest_end_time, creator_email, is_public) VALUES (?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
 
-	result, err := stmt.Exec(contestData.Name, contestData.Description, startTime, endTime)
+	isPublic := "True"
+	result, err := stmt.Exec(contestData.Name, contestData.Description, startTime, endTime, userEmail, isPublic)
 	if err != nil {
 		return err
 	}
@@ -181,4 +215,29 @@ func getProblemIDFromTitle(db *sql.DB, problemTitle string) (int, error) {
 		return 0, err
 	}
 	return problemID, nil
+}
+
+func DistributeUserstoContest(db *sql.DB, contestData ContestData) error {
+	var contestID int
+	err := db.QueryRow("SELECT contest_id FROM contest WHERE contest_title = ?", contestData.Name).Scan(&contestID)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("DATA:", contestID, contestData.Emails)
+
+	stmt, err := db.Prepare("INSERT INTO contest_user (contest_id, user_email) VALUES (?, ?)")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, userEmail := range contestData.Emails {
+		_, err := stmt.Exec(contestID, userEmail)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
